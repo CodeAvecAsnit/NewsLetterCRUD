@@ -1,0 +1,35 @@
+package com.news.lettercrud.Data.model;
+
+import com.news.lettercrud.Data.Enum.Role;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Table;
+
+
+
+@Entity
+@Table(name = "user_accounts")
+public class UserAccount extends BaseAccount {
+
+    @Column(nullable = false,unique = true,length = 30)
+    private String username;
+
+    public UserAccount(){
+        this.setRole(Role.USER_ROLE);
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    @Override
+    public String toString() {
+        return "UserAccount{" +
+                "username='" + username + '\'' +
+                '}';
+    }
+}

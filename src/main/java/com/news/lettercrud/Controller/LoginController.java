@@ -1,5 +1,8 @@
 package com.news.lettercrud.Controller;
 import com.news.lettercrud.Data.DTOs.APIResponseDTO;
+import com.news.lettercrud.Data.DTOs.LoginDTO;
+import com.news.lettercrud.Data.DTOs.LoginResponseDT0;
+import com.news.lettercrud.Data.DTOs.MailVerificationDTO;
 import com.news.lettercrud.Data.model.CompanyAccount;
 import com.news.lettercrud.Data.model.UserAccount;
 import com.news.lettercrud.Services.VerificationService;
@@ -19,11 +22,15 @@ import org.springframework.web.bind.annotation.*;
 @Tag(name = "Login Controller", description = "Handles User and Company registration and verification")
 public class LoginController {
 
-    @Autowired
-    private VerificationService verificationService;
+    private final VerificationService verificationService;
+
+    private final AuthService authService;
 
     @Autowired
-    private AuthService authService;
+    public LoginController(VerificationService verificationService, AuthService authService) {
+        this.verificationService = verificationService;
+        this.authService = authService;
+    }
 
     @Operation(summary = "Authenticate a new user using Email and password")
     @ApiResponses(value = {
@@ -33,7 +40,7 @@ public class LoginController {
 
 
     @PostMapping("/sign_in")
-    public ResponseEntity<LoginResponseDTO> authenticateUser(@Valid @RequestBody LoginDTO loginUser){
+    public ResponseEntity<LoginResponseDT0> authenticateUser(@Valid @RequestBody LoginDTO loginUser){
         System.out.println("SIGN IN endpoint hit");
         return ResponseEntity.ok(authService.login(loginUser));
     }

@@ -3,6 +3,7 @@ package com.news.lettercrud.Services;
 import com.github.benmanes.caffeine.cache.Cache;
 import com.github.benmanes.caffeine.cache.Caffeine;
 
+import com.news.lettercrud.Data.DTOs.LoginAttempt;
 import com.news.lettercrud.Data.Enum.Role;
 import com.news.lettercrud.Data.model.BaseAccount;
 import com.news.lettercrud.Data.model.CompanyAccount;
@@ -33,23 +34,27 @@ public class VerificationService{
     private Cache<String, LoginAttempt> codes;
     private Cache<String, BaseAccount> accounts;
 
-    @Autowired
-    private BaseAccountRepository baseAccountRepository;
+    private final BaseAccountRepository baseAccountRepository;
+
+    private final UserAccountRepository userAccountRepository;
+
+    private final CompanyRepository companyRepository;
+
+    private final PasswordEncoder passwordEncoder;
+
+    private final JwtUtils jwtUtils;
+
+    private final UserDetailsImplService userDetailsImplService;
 
     @Autowired
-    private UserAccountRepository userAccountRepository;
-
-    @Autowired
-    private CompanyRepository companyRepository;
-
-    @Autowired
-    private PasswordEncoder passwordEncoder;
-
-    @Autowired
-    private JwtUtils jwtUtils;
-
-    @Autowired
-    private UserDetailsImplService userDetailsImplService;
+    public VerificationService(BaseAccountRepository baseAccountRepository, UserAccountRepository userAccountRepository, CompanyRepository companyRepository, PasswordEncoder passwordEncoder, JwtUtils jwtUtils, UserDetailsImplService userDetailsImplService) {
+        this.baseAccountRepository = baseAccountRepository;
+        this.userAccountRepository = userAccountRepository;
+        this.companyRepository = companyRepository;
+        this.passwordEncoder = passwordEncoder;
+        this.jwtUtils = jwtUtils;
+        this.userDetailsImplService = userDetailsImplService;
+    }
 
     @PostConstruct
     public void init(){

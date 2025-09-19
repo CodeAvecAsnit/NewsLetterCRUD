@@ -5,6 +5,7 @@ import com.news.lettercrud.Data.DTOs.LoginResponseDT0;
 import com.news.lettercrud.Data.DTOs.MailVerificationDTO;
 import com.news.lettercrud.Data.model.CompanyAccount;
 import com.news.lettercrud.Data.model.UserAccount;
+import com.news.lettercrud.Services.AuthService;
 import com.news.lettercrud.Services.VerificationService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -102,8 +103,8 @@ public class LoginController {
                     .body(new APIResponseDTO("Account details not found", null));
         }
         if (code == 1) {
-            String jwt = verificationService.generateJwt(dto.getEmail());
-            return ResponseEntity.ok(new APIResponseDTO("Successfully Registered", jwt));
+//            String jwt = verificationService.generateJwt(dto.getEmail());
+            return ResponseEntity.ok(new APIResponseDTO("Successfully Registered", "jwt"));
         }
         if (code == 0) {
             return ResponseEntity.badRequest()

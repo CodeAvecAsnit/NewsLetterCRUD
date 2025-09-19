@@ -18,58 +18,59 @@ public class AuthService {
 
     private final Logger logger = LoggerFactory.getLogger(AuthService.class);
 
-    @Autowired
-    private AuthenticationManager authenticationManager;
+//    @Autowired
+//    private AuthenticationManager authenticationManager;
+//
+//    @Autowired
+//    private UserDetailsImplService userDetailsImplService;
 
-    @Autowired
-    private UserDetailsImplService userDetailsImplService;
+//    @Autowired
+//    private PasswordEncoder passwordEncoder;
+//
+//    @Autowired
+//    private JwtUtils jwtUtils;
 
-    @Autowired
-    private PasswordEncoder passwordEncoder;
-
-    @Autowired
-    private JwtUtils jwtUtils;
-
-    private boolean checkPassword(LoginDTO logUser) {
-        UserDetails user = userDetailsImplService.loadUserByUsername(logUser.getEmail());
-        return passwordEncoder.matches(logUser.getPassword(), user.getPassword());
-    }
+//    private boolean checkPassword(LoginDTO logUser) {
+//        UserDetails user = userDetailsImplService.loadUserByUsername(logUser.getEmail());
+//        return passwordEncoder.matches(logUser.getPassword(), user.getPassword());
+//    }
 
     public LoginResponseDT0 logIn(LoginDTO request) {
         //TODO : Implement a Password rate limiting
         try {
-            boolean matcher = checkPassword(request);
+            boolean matcher = true;
+//            boolean matcher = checkPassword(request);
             if (matcher) {
-                String token = jwtUtils.generateJwtTokens(userDetailsImplService.loadUserByUsername(request.getEmail()));
-                return new LoginResponseDT0(200, token, "Success");
+//                String token = jwtUtils.generateJwtTokens(userDetailsImplService.loadUserByUsername(request.getEmail()));
+                return new LoginResponseDT0(200, "token", "Success");
             } else return new LoginResponseDT0(403, "No token", "Invalid Password or Email");
-        }catch (Exception ex) {
+        } catch (Exception ex) {
             logger.error(ex.getMessage());
             return new LoginResponseDT0(403, "No token", "Invalid Password or Email");
         }
     }
 
 
-    public LoginResponseDTO login(LoginDTO request) {
-        try {
-            Authentication authentication = authenticationManager.authenticate(
-                    new UsernamePasswordAuthenticationToken(
-                            request.getEmail(),
-                            request.getPassword()
-                    )
-            );
+    public LoginResponseDT0 login(LoginDTO request) {
+//        try {
+//            Authentication authentication = authenticationManager.authenticate(
+//                    new UsernamePasswordAuthenticationToken(
+//                            request.getEmail(),
+//                            request.getPassword()
+//                    )
+//            );
 
-            UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
-
-            String token = jwtUtils.generateJwtTokens(userDetailsImplService.loadUserByUsername(request.getEmail()));
-
-            return new LoginResponseDTO(200,token,"Success");
-
-        } catch (BadCredentialsException ex) {
-            return new LoginResponseDTO(403,"No token","Password didn't match");
-        } catch (Exception ex) {
-            logger.error(ex.getMessage());
-            return new LoginResponseDTO(500,"No token","Login Failed");
-        }
+//            UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
+//
+//            String token = jwtUtils.generateJwtTokens(userDetailsImplService.loadUserByUsername(request.getEmail()));
+//
+        return new LoginResponseDT0(200, "token", "Success");
+//
+//        } catch (BadCredentialsException ex) {
+//            return new LoginResponseDT0(403,"No token","Password didn't match");
+//        } catch (Exception ex) {
+//            logger.error(ex.getMessage());
+//            return new LoginResponseDT0(500,"No token","Login Failed");
+//        }
     }
 }

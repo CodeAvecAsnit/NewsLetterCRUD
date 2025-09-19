@@ -4,6 +4,7 @@ import com.github.benmanes.caffeine.cache.Cache;
 import com.github.benmanes.caffeine.cache.Caffeine;
 
 import com.news.lettercrud.Data.DTOs.LoginAttempt;
+import com.news.lettercrud.Data.DTOs.MailVerificationDTO;
 import com.news.lettercrud.Data.Enum.Role;
 import com.news.lettercrud.Data.model.BaseAccount;
 import com.news.lettercrud.Data.model.CompanyAccount;
@@ -40,20 +41,23 @@ public class VerificationService{
 
     private final CompanyRepository companyRepository;
 
-    private final PasswordEncoder passwordEncoder;
+//    private final PasswordEncoder passwordEncoder;
 
-    private final JwtUtils jwtUtils;
-
-    private final UserDetailsImplService userDetailsImplService;
+//    private final JwtUtils jwtUtils;
+//
+//    private final UserDetailsImplService userDetailsImplService;
 
     @Autowired
-    public VerificationService(BaseAccountRepository baseAccountRepository, UserAccountRepository userAccountRepository, CompanyRepository companyRepository, PasswordEncoder passwordEncoder, JwtUtils jwtUtils, UserDetailsImplService userDetailsImplService) {
+    public VerificationService(BaseAccountRepository baseAccountRepository, UserAccountRepository userAccountRepository, CompanyRepository companyRepository
+//                               ,PasswordEncoder passwordEncoder,
+//                               JwtUtils jwtUtils, UserDetailsImplService userDetailsImplService
+    ) {
         this.baseAccountRepository = baseAccountRepository;
         this.userAccountRepository = userAccountRepository;
         this.companyRepository = companyRepository;
-        this.passwordEncoder = passwordEncoder;
-        this.jwtUtils = jwtUtils;
-        this.userDetailsImplService = userDetailsImplService;
+//        this.passwordEncoder = passwordEncoder;
+//        this.jwtUtils = jwtUtils;
+//        this.userDetailsImplService = userDetailsImplService;
     }
 
     @PostConstruct
@@ -73,11 +77,11 @@ public class VerificationService{
         if(attempt!=null){
             return;
         }
-        int code = sendEmailToWebClient(email);
-        if(code != -1){
-            codes.put(email,new LoginAttempt(code));
-            accounts.put(email,baseAccount);
-        }
+//        int code = sendEmailToWebClient(email);
+//        if(code != -1){
+//            codes.put(email,new LoginAttempt(code));
+//            accounts.put(email,baseAccount);
+//        }
     }
 
 
@@ -95,7 +99,7 @@ public class VerificationService{
                 return 6;
             }
             accounts.invalidate(email);
-            account.setPassword(passwordEncoder.encode(account.getPassword()));
+//            account.setPassword(passwordEncoder.encode(account.getPassword()));
             if(account.getRole()== Role.COMPANY_ROLE){
                 CompanyAccount companyAccount=(CompanyAccount) account;
                 companyRepository.save(companyAccount);
@@ -109,47 +113,48 @@ public class VerificationService{
     }
 
 
-    private Integer sendEmailToWebClient(String email) {
-        WebClient webClient = WebClient.builder()
-                .baseUrl("http://localhost:8081")
-                .defaultHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
-                .build();
+//    private Integer sendEmailToWebClient(String email) {
+//        WebClient webClient = WebClient.builder()
+//                .baseUrl("http://localhost:8081")
+//                .defaultHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
+//                .build();
+//
+//        MailRequestDTO request = new MailRequestDTO(email);
+//
+//        return webClient.post()
+//                .uri("/mindgame")
+//                .bodyValue(request)
+//                .exchangeToMono(response -> {
+//                    if (response.statusCode().is2xxSuccessful()) {
+//                        return response.bodyToMono(String.class)
+//                                .map(body -> {
+//                                    if ("-1".equals(body)) {
+//                                        System.out.println("Server returned -1");
+//                                        return -1;
+//                                    } else if (body.matches("\\d{6}")) {
+//                                        return Integer.parseInt(body);
+//                                    } else {
+//                                        logger.error("Unexpected body format: {} " , body);
+//                                        return -1;
+//                                    }
+//                                });
+//                    } else {
+//                        logger.error("HTTP error: " + response.statusCode());
+//                        return Mono.just(-1);
+//                    }
+//                })
+//                .onErrorResume(e -> {
+//                    logger.error("Request failed: {} " , e.getMessage());
+//                    return Mono.just(-1);
+//                })
+//                .block();
 
-        MailRequestDTO request = new MailRequestDTO(email);
-
-        return webClient.post()
-                .uri("/mindgame")
-                .bodyValue(request)
-                .exchangeToMono(response -> {
-                    if (response.statusCode().is2xxSuccessful()) {
-                        return response.bodyToMono(String.class)
-                                .map(body -> {
-                                    if ("-1".equals(body)) {
-                                        System.out.println("Server returned -1");
-                                        return -1;
-                                    } else if (body.matches("\\d{6}")) {
-                                        return Integer.parseInt(body);
-                                    } else {
-                                        logger.error("Unexpected body format: {} " , body);
-                                        return -1;
-                                    }
-                                });
-                    } else {
-                        logger.error("HTTP error: " + response.statusCode());
-                        return Mono.just(-1);
-                    }
-                })
-                .onErrorResume(e -> {
-                    logger.error("Request failed: {} " , e.getMessage());
-                    return Mono.just(-1);
-                })
-                .block();
-    }
+//    }
 
 
-    public String generateJwt(String email){
-        UserDetails userDetails = userDetailsImplService.loadUserByUsername(email);
-        return jwtUtils.generateJwtTokens(userDetails);
-    }
+//    public String generateJwt(String email){
+//        UserDetails userDetails = userDetailsImplService.loadUserByUsername(email);
+//        return jwtUtils.generateJwtTokens(userDetails);
+//    }
 
 }

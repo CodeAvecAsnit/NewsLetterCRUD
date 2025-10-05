@@ -1,4 +1,4 @@
 package com.news.lettercrud.Repositories;
 
-public class NewsRepository {
+public interface NewsRepository {
 }

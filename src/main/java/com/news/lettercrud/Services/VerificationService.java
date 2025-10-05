@@ -9,22 +9,21 @@ import com.news.lettercrud.Data.Enum.Role;
 import com.news.lettercrud.Data.model.BaseAccount;
 import com.news.lettercrud.Data.model.CompanyAccount;
 import com.news.lettercrud.Data.model.UserAccount;
-import com.news.lettercrud.Repositories.BaseAccountRepository;
 import com.news.lettercrud.Repositories.CompanyRepository;
 import com.news.lettercrud.Repositories.UserAccountRepository;
+import com.news.lettercrud.Security.JwtUtils;
+import com.news.lettercrud.Security.UserDetailsImplService;
 import jakarta.annotation.PostConstruct;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.MediaType;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import reactor.core.publisher.Mono;
+import java.security.SecureRandom;
 import java.util.concurrent.TimeUnit;
 
 @Service
@@ -32,32 +31,31 @@ import java.util.concurrent.TimeUnit;
 public class VerificationService{
 
     private final Logger logger = LoggerFactory.getLogger(VerificationService.class);
-    private Cache<String, LoginAttempt> codes;
-    private Cache<String, BaseAccount> accounts;
 
-    private final BaseAccountRepository baseAccountRepository;
+    private Cache<String, LoginAttempt> codes;
+
+    private Cache<String, BaseAccount> accounts;
 
     private final UserAccountRepository userAccountRepository;
 
     private final CompanyRepository companyRepository;
 
-//    private final PasswordEncoder passwordEncoder;
+    private final PasswordEncoder passwordEncoder;
 
-//    private final JwtUtils jwtUtils;
-//
-//    private final UserDetailsImplService userDetailsImplService;
+    private final MailServiceImpl mailServiceImpl;
+
+    private final SecureRandom secureRandom;
+
 
     @Autowired
-    public VerificationService(BaseAccountRepository baseAccountRepository, UserAccountRepository userAccountRepository, CompanyRepository companyRepository
-//                               ,PasswordEncoder passwordEncoder,
-//                               JwtUtils jwtUtils, UserDetailsImplService userDetailsImplService
+    public VerificationService(UserAccountRepository userAccountRepository, CompanyRepository companyRepository
+                               , PasswordEncoder passwordEncoder, MailServiceImpl mailServiceImpl, SecureRandom secureRandom
     ) {
-        this.baseAccountRepository = baseAccountRepository;
         this.userAccountRepository = userAccountRepository;
         this.companyRepository = companyRepository;
-//        this.passwordEncoder = passwordEncoder;
-//        this.jwtUtils = jwtUtils;
-//        this.userDetailsImplService = userDetailsImplService;
+        this.passwordEncoder = passwordEncoder;
+        this.mailServiceImpl = mailServiceImpl;
+        this.secureRandom = secureRandom;
     }
 
     @PostConstruct
@@ -77,11 +75,12 @@ public class VerificationService{
         if(attempt!=null){
             return;
         }
-//        int code = sendEmailToWebClient(email);
-//        if(code != -1){
-//            codes.put(email,new LoginAttempt(code));
-//            accounts.put(email,baseAccount);
-//        }
+        int code =secureRandom.nextInt(100000,1000000);
+        mailServiceImpl.sendMail(baseAccount.getEmail(),code);
+        if(code != -1){
+            codes.put(email,new LoginAttempt(code));
+            accounts.put(email,baseAccount);
+        }
     }
 
 
@@ -99,7 +98,7 @@ public class VerificationService{
                 return 6;
             }
             accounts.invalidate(email);
-//            account.setPassword(passwordEncoder.encode(account.getPassword()));
+            account.setPassword(passwordEncoder.encode(account.getPassword()));
             if(account.getRole()== Role.COMPANY_ROLE){
                 CompanyAccount companyAccount=(CompanyAccount) account;
                 companyRepository.save(companyAccount);
@@ -111,50 +110,5 @@ public class VerificationService{
         }
         else return returnCode;
     }
-
-
-//    private Integer sendEmailToWebClient(String email) {
-//        WebClient webClient = WebClient.builder()
-//                .baseUrl("http://localhost:8081")
-//                .defaultHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
-//                .build();
-//
-//        MailRequestDTO request = new MailRequestDTO(email);
-//
-//        return webClient.post()
-//                .uri("/mindgame")
-//                .bodyValue(request)
-//                .exchangeToMono(response -> {
-//                    if (response.statusCode().is2xxSuccessful()) {
-//                        return response.bodyToMono(String.class)
-//                                .map(body -> {
-//                                    if ("-1".equals(body)) {
-//                                        System.out.println("Server returned -1");
-//                                        return -1;
-//                                    } else if (body.matches("\\d{6}")) {
-//                                        return Integer.parseInt(body);
-//                                    } else {
-//                                        logger.error("Unexpected body format: {} " , body);
-//                                        return -1;
-//                                    }
-//                                });
-//                    } else {
-//                        logger.error("HTTP error: " + response.statusCode());
-//                        return Mono.just(-1);
-//                    }
-//                })
-//                .onErrorResume(e -> {
-//                    logger.error("Request failed: {} " , e.getMessage());
-//                    return Mono.just(-1);
-//                })
-//                .block();
-
-//    }
-
-
-//    public String generateJwt(String email){
-//        UserDetails userDetails = userDetailsImplService.loadUserByUsername(email);
-//        return jwtUtils.generateJwtTokens(userDetails);
-//    }
 
 }

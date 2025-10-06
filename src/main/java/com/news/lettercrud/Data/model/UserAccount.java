@@ -15,7 +15,7 @@ public class UserAccount extends BaseAccount {
     private String username;
 
     public UserAccount(){
-        this.setRole(Role.USER_ROLE);
+        this.setRole(Role.USER);
     }
 
     public String getUsername() {

@@ -5,6 +5,8 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 
+import java.util.Set;
+
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
 @Table(name = "base_accounts")
@@ -26,6 +28,9 @@ public class BaseAccount extends AuditTable {
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
     private Role role;
+
+    @OneToMany(mappedBy = "author")
+    private Set<NewsLetter> writings;
 
 
     public Long getUserId() {

@@ -11,15 +11,12 @@ import com.news.lettercrud.Data.model.CompanyAccount;
 import com.news.lettercrud.Data.model.UserAccount;
 import com.news.lettercrud.Repositories.CompanyRepository;
 import com.news.lettercrud.Repositories.UserAccountRepository;
-import com.news.lettercrud.Security.JwtUtils;
-import com.news.lettercrud.Security.UserDetailsImplService;
 import jakarta.annotation.PostConstruct;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.EnableAsync;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -99,7 +96,7 @@ public class VerificationService{
             }
             accounts.invalidate(email);
             account.setPassword(passwordEncoder.encode(account.getPassword()));
-            if(account.getRole()== Role.COMPANY_ROLE){
+            if(account.getRole()== Role.COMPANY){
                 CompanyAccount companyAccount=(CompanyAccount) account;
                 companyRepository.save(companyAccount);
             }else{

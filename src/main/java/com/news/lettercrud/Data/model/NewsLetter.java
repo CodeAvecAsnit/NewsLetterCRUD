@@ -3,7 +3,7 @@ package com.news.lettercrud.Data.model;
 import jakarta.persistence.*;
 
 @Entity
-public class NewsLetter {
+public class NewsLetter extends AuditTable{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int newsId;

@@ -1,5 +1,6 @@
 package com.news.lettercrud.Data.model;
 
+import com.news.lettercrud.Data.DTOs.CreateORUpdateNewsDTO;
 import jakarta.persistence.*;
 
 @Entity
@@ -84,4 +85,5 @@ public class NewsLetter extends AuditTable{
     public void setAuthor(BaseAccount author) {
         this.author = author;
     }
+
 }

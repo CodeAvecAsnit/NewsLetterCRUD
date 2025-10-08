@@ -62,6 +62,18 @@ public class BaseAccount extends AuditTable {
         this.email = email;
     }
 
+    public void setUserId(Long userId) {
+        this.userId = userId;
+    }
+
+    public Set<NewsLetter> getWritings() {
+        return writings;
+    }
+
+    public void setWritings(Set<NewsLetter> writings) {
+        this.writings = writings;
+    }
+
     @Override
     public String toString() {
         return "BaseAccount{" +

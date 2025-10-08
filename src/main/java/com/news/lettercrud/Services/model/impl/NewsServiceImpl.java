@@ -1,7 +1,8 @@
-package com.news.lettercrud.Services;
+package com.news.lettercrud.Services.model.impl;
 
 import com.news.lettercrud.Data.model.NewsLetter;
 import com.news.lettercrud.Repositories.NewsRepository;
+import com.news.lettercrud.Services.model.NewsService;
 import com.news.lettercrud.exceptions.NewsNotFoundException;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,6 +36,11 @@ public class NewsServiceImpl implements NewsService {
     @Transactional
     public void deleteNews(int id){
         newsRepository.deleteById(id);
+    }
+
+    @Override
+    public void deletenews(NewsLetter newsLetter) {
+        newsRepository.delete(newsLetter);
     }
 
 

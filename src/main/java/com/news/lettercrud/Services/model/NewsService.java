@@ -1,4 +1,4 @@
-package com.news.lettercrud.Services;
+package com.news.lettercrud.Services.model;
 
 import com.news.lettercrud.Data.model.NewsLetter;
 import jakarta.transaction.Transactional;
@@ -13,6 +13,9 @@ public interface NewsService {
 
     @Transactional
     void deleteNews(int id);
+
+    @Transactional
+    void deletenews(NewsLetter newsLetter);
 
     @Transactional
     void postNews(NewsLetter newsLetter);

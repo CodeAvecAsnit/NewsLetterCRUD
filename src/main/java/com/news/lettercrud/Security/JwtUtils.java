@@ -17,7 +17,6 @@ import java.util.Date;
 public class JwtUtils {
 
     private static final Logger logger = (Logger) LoggerFactory.getLogger(Utils.class);
-
     private static final String jwtSecret = "haljldfskjakljfldasjlfjaslfsjaldkfjsaldkfjsaldkfjsaldkfjsaldkfjsaldkfjsaldkfjsaldkfjsaldkfjsaldkfj";
     private static final long jwtExpiration = 86400000;
     private SecretKey secretKey;
@@ -35,10 +34,11 @@ public class JwtUtils {
         else return null;
     }
 
-    public String generateJwtTokens(UserDetails userDetails){
-        String username = userDetails.getUsername();
-        String detailsRole = userDetails.getAuthorities().stream().findFirst().map(GrantedAuthority::getAuthority).orElse("USER_ROLE");
-        return Jwts.builder().subject(username).claim("role",detailsRole).
+    public String generateJwtTokens(UserDetailsImpl userDetailsImpl){
+        String username = userDetailsImpl.getUsername();
+        String detailsRole = userDetailsImpl.getAuthorities().stream().findFirst().map(GrantedAuthority::getAuthority).orElse("USER_ROLE");
+        return Jwts.builder().subject(username).claim("role",detailsRole)
+                .claim("id",userDetailsImpl.getId()).
                 issuedAt(new Date()).
                 expiration(new Date(new Date().getTime()+jwtExpiration)).
                 signWith(secretKey).
@@ -55,6 +55,12 @@ public class JwtUtils {
                 .get("role", String.class);
     }
 
+    public Long getUserIdFromToken(String token){
+        return Jwts.parser().
+                verifyWith(secretKey).
+                build().parseSignedClaims(token).
+                getPayload().get("id",Long.class);
+    }
 
     public String getUserNameFromToken(String token) {
         return Jwts.parser()

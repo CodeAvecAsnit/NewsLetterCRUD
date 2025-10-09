@@ -3,6 +3,7 @@ package com.news.lettercrud.Services;
 import com.news.lettercrud.Data.DTOs.LoginDTO;
 import com.news.lettercrud.Data.DTOs.LoginResponseDT0;
 import com.news.lettercrud.Security.JwtUtils;
+import com.news.lettercrud.Security.UserDetailsImpl;
 import com.news.lettercrud.Security.UserDetailsImplService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -38,7 +39,7 @@ public class AuthService {
         try {
             boolean matcher = checkPassword(request);
             if (matcher) {
-               String token = jwtUtils.generateJwtTokens(userDetailsImplService.loadUserByUsername(request.getEmail()));
+               String token = jwtUtils.generateJwtTokens((UserDetailsImpl)userDetailsImplService.loadUserByUsername(request.getEmail()));
                 return new LoginResponseDT0(200, "token", "Success");
             } else return new LoginResponseDT0(403, "No token", "Invalid Password or Email");
         } catch (Exception ex) {

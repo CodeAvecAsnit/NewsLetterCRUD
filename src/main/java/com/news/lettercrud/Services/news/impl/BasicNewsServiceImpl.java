@@ -1,7 +1,8 @@
-package com.news.lettercrud.Services;
+package com.news.lettercrud.Services.news.impl;
 
 import com.news.lettercrud.Data.model.NewsLetter;
 import com.news.lettercrud.Services.model.NewsService;
+import com.news.lettercrud.Services.news.BasicNewsService;
 import com.news.lettercrud.exceptions.WrongAuthorException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -11,25 +12,30 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
-public class BasicNewsService {
+public class BasicNewsServiceImpl implements BasicNewsService {
     private final NewsService newsService;
 
     @Autowired
-    public BasicNewsService(NewsService newsService) {
+    public BasicNewsServiceImpl(NewsService newsService) {
         this.newsService = newsService;
     }
 
+    @Override
     public List<NewsLetter> getTodayNews(){
         LocalDateTime today = LocalDateTime.now();
         LocalDateTime yesterday = today.minusDays(1);
         return newsService.getTodayNews(yesterday,today);
     }
 
+    @Override
     public NewsLetter getNewsById(int id){
         return newsService.findById(id);
     }
 
-    public void deleteNewsByUser(int userId,int newsId){
+
+
+    @Override
+    public void deleteNewsByUser(long userId, int newsId){
         NewsLetter newsLetter = newsService.findById(newsId);
         if(newsLetter.getAuthor().getUserId()!=userId){
             throw new WrongAuthorException();
@@ -37,6 +43,7 @@ public class BasicNewsService {
         newsService.deletenews(newsLetter);
     }
 
+    @Override
     @PreAuthorize("hasAuthority('SUPER_ADMIN')")
     public void deleteByADMIN(int newsId){
         newsService.deleteNews(newsId);

@@ -1,21 +1,24 @@
-package com.news.lettercrud.Services;
+package com.news.lettercrud.Services.auth.impl;
 
 import com.news.lettercrud.Data.DTOs.LoginDTO;
 import com.news.lettercrud.Data.DTOs.LoginResponseDT0;
 import com.news.lettercrud.Security.JwtUtils;
 import com.news.lettercrud.Security.UserDetailsImpl;
 import com.news.lettercrud.Security.UserDetailsImplService;
+import com.news.lettercrud.Services.auth.LoginService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+
+
 @Service
-public class AuthService {
+public class LoginServiceImpl implements LoginService {
 
-    private final Logger logger = LoggerFactory.getLogger(AuthService.class);
-
+    private final Logger logger = LoggerFactory.getLogger(LoginServiceImpl.class);
 
     private final UserDetailsImplService userDetailsImplService;
 
@@ -23,7 +26,8 @@ public class AuthService {
 
     private final JwtUtils jwtUtils;
 
-    public AuthService(UserDetailsImplService userDetailsImplService,PasswordEncoder passwordEncoder, JwtUtils jwtUtils) {
+    @Autowired
+    public LoginServiceImpl(UserDetailsImplService userDetailsImplService, PasswordEncoder passwordEncoder, JwtUtils jwtUtils) {
         this.userDetailsImplService = userDetailsImplService;
         this.passwordEncoder = passwordEncoder;
         this.jwtUtils = jwtUtils;
@@ -34,6 +38,7 @@ public class AuthService {
         return passwordEncoder.matches(logUser.getPassword(), user.getPassword());
     }
 
+    @Override
     public LoginResponseDT0 login(LoginDTO request) {
         //TODO : Implement a Password rate limiting
         try {

@@ -11,10 +11,12 @@ import com.news.lettercrud.Data.model.CompanyAccount;
 import com.news.lettercrud.Data.model.UserAccount;
 import com.news.lettercrud.Repositories.CompanyRepository;
 import com.news.lettercrud.Repositories.UserAccountRepository;
+import com.news.lettercrud.Services.infrastructure.NotificationService;
 import jakarta.annotation.PostConstruct;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -39,19 +41,19 @@ public class VerificationService{
 
     private final PasswordEncoder passwordEncoder;
 
-    private final MailServiceImpl mailServiceImpl;
+    private final NotificationService notificationService;
 
     private final SecureRandom secureRandom;
 
 
     @Autowired
     public VerificationService(UserAccountRepository userAccountRepository, CompanyRepository companyRepository
-                               , PasswordEncoder passwordEncoder, MailServiceImpl mailServiceImpl, SecureRandom secureRandom
+                               , PasswordEncoder passwordEncoder, @Qualifier("mailServiceImpl") NotificationService notificationService, SecureRandom secureRandom
     ) {
         this.userAccountRepository = userAccountRepository;
         this.companyRepository = companyRepository;
         this.passwordEncoder = passwordEncoder;
-        this.mailServiceImpl = mailServiceImpl;
+        this.notificationService = notificationService;
         this.secureRandom = secureRandom;
     }
 
@@ -73,7 +75,7 @@ public class VerificationService{
             return;
         }
         int code =secureRandom.nextInt(100000,1000000);
-        mailServiceImpl.sendMail(baseAccount.getEmail(),code);
+        notificationService.sendMail(baseAccount.getEmail(),code);
         if(code != -1){
             codes.put(email,new LoginAttempt(code));
             accounts.put(email,baseAccount);

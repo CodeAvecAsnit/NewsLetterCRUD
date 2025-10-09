@@ -1,12 +1,11 @@
-package com.news.lettercrud.Services;
+package com.news.lettercrud.Services.news.impl;
 
 import com.news.lettercrud.Data.DTOs.CreateORUpdateNewsDTO;
-import com.news.lettercrud.Data.model.BaseAccount;
 import com.news.lettercrud.Data.model.NewsCategory;
 import com.news.lettercrud.Data.model.NewsLetter;
 import com.news.lettercrud.Services.model.CategoryService;
 import com.news.lettercrud.Services.model.NewsService;
-import com.news.lettercrud.Services.model.UserService;
+import com.news.lettercrud.Services.news.UpdateNewsService;
 import com.news.lettercrud.exceptions.ResourceDoesNotExistException;
 import com.news.lettercrud.exceptions.UnknownException;
 import com.news.lettercrud.exceptions.WrongAuthorException;
@@ -15,23 +14,22 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 
-import java.util.Set;
-
 
 @Service
-public class UserNewsService {
+public class UpdateNewsServiceImpl implements UpdateNewsService {
 
     private final NewsService newsService;
     private final CategoryService categoryService;
 
     @Autowired
-    public UserNewsService(@Qualifier("newsServiceImpl") NewsService newsService
-                       ,@Qualifier("categoryServiceImpl")CategoryService categoryService) {
+    public UpdateNewsServiceImpl(@Qualifier("newsServiceImpl") NewsService newsService
+                       , @Qualifier("categoryServiceImpl")CategoryService categoryService) {
         this.newsService = newsService;
         this.categoryService=categoryService;
     }
 
 
+    @Override
     public void updateNews(int newsId,CreateORUpdateNewsDTO newData,long userId){
        NewsLetter oldNews = newsService.findById(newsId);
        if(oldNews.getAuthor().getUserId()!=userId){
@@ -40,6 +38,7 @@ public class UserNewsService {
        updateNews(oldNews,newData);
     }
 
+    @Override
     @PreAuthorize("hasAuthority('SUPER_ADMIN')")
     public void updateNewsByAdmin(int newsId,CreateORUpdateNewsDTO newData){
         NewsLetter oldNews = newsService.findById(newsId);

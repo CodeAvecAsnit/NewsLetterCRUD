@@ -1,5 +1,6 @@
-package com.news.lettercrud.Services;
+package com.news.lettercrud.Services.infrastructure.impl;
 
+import com.news.lettercrud.Services.infrastructure.NotificationService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,7 +12,7 @@ import org.springframework.stereotype.Service;
 
 @Service
 @EnableAsync
-public class MailServiceImpl {
+public class MailServiceImpl implements NotificationService {
 
     private final Logger logger = LoggerFactory.getLogger(MailServiceImpl.class);
 
@@ -22,6 +23,7 @@ public class MailServiceImpl {
         this.javaMailSender = javaMailSender;
     }
 
+    @Override
     @Async
     public void  sendMail(String email,int code){
         SimpleMailMessage message = new SimpleMailMessage();

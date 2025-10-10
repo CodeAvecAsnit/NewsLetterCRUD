@@ -38,5 +38,4 @@ public class UpdateNewsController {
         updateNewsService.updateNewsByAdmin(newsId,data);
         return ResponseEntity.ok("Success");
     }
-
 }

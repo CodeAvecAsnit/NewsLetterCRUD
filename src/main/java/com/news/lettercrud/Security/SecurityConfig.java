@@ -22,8 +22,6 @@ public class SecurityConfig {
 
     private final JwtFilter jwtFilter;
 
-
-
     @Autowired
     public SecurityConfig(JwtFilter jwtFilter) {
         this.jwtFilter = jwtFilter;
@@ -42,7 +40,11 @@ public class SecurityConfig {
                                 "/api/v1/signup/**",
                                 "/swagger-ui.html",
                                 "/swagger-ui/**",
-                                "/v3/api-docs/**"
+                                "/v3/api-docs/**",
+                                "/api/v1/check-email",
+                                "/api/v1/signup/*",
+                                "/api/v1/user/posts",
+                                "/api/v1/news/today"
                         ).permitAll()
                         .anyRequest().authenticated()
                 )

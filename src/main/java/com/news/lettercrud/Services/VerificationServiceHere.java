@@ -27,9 +27,9 @@ import java.util.concurrent.TimeUnit;
 
 @Service
 @EnableAsync
-public class VerificationService{
+public class VerificationServiceHere {
 
-    private final Logger logger = LoggerFactory.getLogger(VerificationService.class);
+    private final Logger logger = LoggerFactory.getLogger(VerificationServiceHere.class);
 
     private Cache<String, LoginAttempt> codes;
 
@@ -47,7 +47,7 @@ public class VerificationService{
 
 
     @Autowired
-    public VerificationService(UserAccountRepository userAccountRepository, CompanyRepository companyRepository
+    public VerificationServiceHere(UserAccountRepository userAccountRepository, CompanyRepository companyRepository
                                , PasswordEncoder passwordEncoder, @Qualifier("mailServiceImpl") NotificationService notificationService, SecureRandom secureRandom
     ) {
         this.userAccountRepository = userAccountRepository;

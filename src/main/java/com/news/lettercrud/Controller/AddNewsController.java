@@ -3,6 +3,7 @@ package com.news.lettercrud.Controller;
 import com.news.lettercrud.Data.DTOs.CreateORUpdateNewsDTO;
 import com.news.lettercrud.Security.UserDetailsImpl;
 import com.news.lettercrud.Services.news.AddNewsService;
+import io.swagger.v3.oas.annotations.Operation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -25,6 +26,7 @@ public class AddNewsController {
     }
 
 
+    @Operation(summary = "Post News accessible only by COMPANY or ADMIN")
     @PostMapping("/news")
     public ResponseEntity<?> postNews(@RequestBody CreateORUpdateNewsDTO data,
                                       @AuthenticationPrincipal UserDetailsImpl userDetails){

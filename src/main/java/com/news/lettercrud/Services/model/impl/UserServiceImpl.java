@@ -23,4 +23,10 @@ public class UserServiceImpl implements UserService {
                 orElseThrow(UserNotFoundException::new);
     }
 
+    @Override
+    public boolean existsByEmail(String email){
+        return baseAccountRepository.existsByEmail(email);
+    }
+
+
 }

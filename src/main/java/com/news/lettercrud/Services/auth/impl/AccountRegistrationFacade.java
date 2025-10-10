@@ -5,8 +5,13 @@ import com.news.lettercrud.Data.DTOs.MailVerificationDTO;
 import com.news.lettercrud.Data.DTOs.RegistrationDTO;
 import com.news.lettercrud.Data.Enum.VerificationResult;
 import com.news.lettercrud.Data.model.BaseAccount;
+import com.news.lettercrud.Services.auth.RegistrationService;
+import com.news.lettercrud.Services.auth.VerificationService;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
 import static org.slf4j.LoggerFactory.*;
@@ -25,8 +30,8 @@ public class AccountRegistrationFacade {
 
     @Autowired
     public AccountRegistrationFacade(
-            RegistrationService registrationService,
-            VerificationService verificationService
+            @Qualifier("registrationServiceImpl") RegistrationService registrationService,
+            @Qualifier("verificationServiceImpl") VerificationService verificationService
     ) {
         this.registrationService = registrationService;
         this.verificationService = verificationService;
@@ -76,5 +81,17 @@ public class AccountRegistrationFacade {
      */
     public boolean isEmailAvailable(String email) {
         return registrationService.isEmailAvailable(email);
+    }
+    /**
+     * Delete the JWTe
+     */
+
+    public void expireCookie(HttpServletResponse response){
+        Cookie cookie = new Cookie("access_token", null);
+        cookie.setHttpOnly(true);
+        cookie.setSecure(false);
+        cookie.setPath("/");
+        cookie.setMaxAge(0);
+        response.addCookie(cookie);
     }
 }

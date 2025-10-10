@@ -1,6 +1,5 @@
 package com.news.lettercrud.Controller;
 
-import com.news.lettercrud.Data.DTOs.CreateORUpdateNewsDTO;
 import com.news.lettercrud.Security.UserDetailsImpl;
 import com.news.lettercrud.Services.news.BasicNewsService;
 import org.springframework.beans.factory.annotation.Autowired;

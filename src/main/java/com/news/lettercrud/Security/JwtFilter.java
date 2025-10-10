@@ -2,6 +2,7 @@ package com.news.lettercrud.Security;
 
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
@@ -63,7 +64,20 @@ public class JwtFilter  extends OncePerRequestFilter {
 
     private String parseJWT(HttpServletRequest request){
         String jwt = jwtUtils.getJwtFromHeader(request);
-        logger.debug("AuthTokenFilter.java : {}",jwt);
-        return jwt;
+        if (jwt != null) {
+            logger.debug("JWT extracted from Authorization header: {}", jwt);
+            return jwt;
+        }
+        Cookie[] cookies = request.getCookies();
+        if ( cookies!= null) {
+            for (Cookie cookie : cookies) {
+                if (cookie.getName().equals("access_token")) {
+                    logger.debug("JWT extracted from Cookie: {}", cookie.getValue());
+                    return cookie.getValue();
+                }
+            }
+        }
+        logger.debug("JWT not found in header or cookie");
+        return null;
     }
 }

@@ -6,6 +6,8 @@ import com.news.lettercrud.Security.JwtUtils;
 import com.news.lettercrud.Security.UserDetailsImpl;
 import com.news.lettercrud.Security.UserDetailsImplService;
 import com.news.lettercrud.Services.auth.LoginService;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,18 +41,28 @@ public class LoginServiceImpl implements LoginService {
     }
 
     @Override
-    public LoginResponseDT0 login(LoginDTO request) {
+    public LoginResponseDT0 login(LoginDTO request, HttpServletResponse httpResponse) {
         //TODO : Implement a Password rate limiting
         try {
             boolean matcher = checkPassword(request);
             if (matcher) {
                String token = jwtUtils.generateJwtTokens((UserDetailsImpl)userDetailsImplService.loadUserByUsername(request.getEmail()));
-                return new LoginResponseDT0(200, "token", "Success");
+               attachJwt(httpResponse,token);
+                return new LoginResponseDT0(200, token, "Success");
             } else return new LoginResponseDT0(403, "No token", "Invalid Password or Email");
         } catch (Exception ex) {
             logger.error(ex.getMessage());
             return new LoginResponseDT0(403, "No token", "Invalid Password or Email");
         }
+    }
+
+    private void attachJwt(HttpServletResponse response,String jwt){
+        Cookie cookie = new Cookie("access_token",jwt);
+        cookie.setHttpOnly(true);
+        cookie.setSecure(false);
+        cookie.setPath("/");
+        cookie.setMaxAge(86400);
+        response.addCookie(cookie);
     }
 
 }

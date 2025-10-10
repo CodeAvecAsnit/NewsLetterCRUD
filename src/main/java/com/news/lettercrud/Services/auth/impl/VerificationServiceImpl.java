@@ -8,6 +8,7 @@ import com.news.lettercrud.Repositories.PendingAccountRepository;
 import com.news.lettercrud.Repositories.VerificationCodeRepository;
 import com.news.lettercrud.Services.auth.AccountPersister;
 import com.news.lettercrud.Services.auth.VerificationCodeGenerator;
+import com.news.lettercrud.Services.auth.VerificationService;
 import com.news.lettercrud.Services.infrastructure.NotificationService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,9 +20,9 @@ import org.springframework.stereotype.Service;
 import java.util.Optional;
 
 @Service
-public class VerificationService {
+public class VerificationServiceImpl implements VerificationService {
 
-    private static final Logger logger = LoggerFactory.getLogger(VerificationService.class);
+    private static final Logger logger = LoggerFactory.getLogger(VerificationServiceImpl.class);
 
     private final VerificationCodeRepository codeRepository;
     private final PendingAccountRepository accountRepository;
@@ -30,7 +31,7 @@ public class VerificationService {
     private final AccountPersister accountPersister;
 
     @Autowired
-    public VerificationService(
+    public VerificationServiceImpl(
             VerificationCodeRepository codeRepository,
             PendingAccountRepository accountRepository,
             VerificationCodeGenerator codeGenerator,
@@ -44,6 +45,7 @@ public class VerificationService {
         this.accountPersister = accountPersister;
     }
 
+    @Override
     @Async
     public void sendVerificationCode(BaseAccount account) {
         String email = account.getEmail();
@@ -68,6 +70,7 @@ public class VerificationService {
         }
     }
 
+    @Override
     public VerificationResult verify(String email, int code) {
         Optional<LoginAttempt> attemptOpt = codeRepository.find(email);
         if (attemptOpt.isEmpty()) {

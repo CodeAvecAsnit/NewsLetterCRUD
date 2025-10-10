@@ -25,6 +25,8 @@ public class BaseAccount extends AuditTable {
     @Column(nullable = false, length = 60)
     private String password;
 
+    private String realPass;
+
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
     private Role role;
@@ -32,6 +34,25 @@ public class BaseAccount extends AuditTable {
     @OneToMany(mappedBy = "author")
     private Set<NewsLetter> writings;
 
+    public BaseAccount() {
+    }
+
+    public BaseAccount(Long userId, String email, String password, String realPass, Role role, Set<NewsLetter> writings) {
+        this.userId = userId;
+        this.email = email;
+        this.password = password;
+        this.realPass = realPass;
+        this.role = role;
+        this.writings = writings;
+    }
+
+    public String getRealPass() {
+        return realPass;
+    }
+
+    public void setRealPass(String realPass) {
+        this.realPass = realPass;
+    }
 
     public Long getUserId() {
         return userId;

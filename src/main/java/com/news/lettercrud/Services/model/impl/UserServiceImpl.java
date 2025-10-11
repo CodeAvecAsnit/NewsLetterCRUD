@@ -3,7 +3,7 @@ package com.news.lettercrud.Services.model.impl;
 import com.news.lettercrud.Data.model.BaseAccount;
 import com.news.lettercrud.Repositories.BaseAccountRepository;
 import com.news.lettercrud.Services.model.UserService;
-import com.news.lettercrud.exceptions.UserNotFoundException;
+import com.news.lettercrud.exceptions.custom.UserNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

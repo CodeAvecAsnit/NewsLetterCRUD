@@ -3,7 +3,7 @@ package com.news.lettercrud.Services.model.impl;
 import com.news.lettercrud.Data.model.NewsLetter;
 import com.news.lettercrud.Repositories.NewsRepository;
 import com.news.lettercrud.Services.model.NewsService;
-import com.news.lettercrud.exceptions.NewsNotFoundException;
+import com.news.lettercrud.exceptions.custom.NewsNotFoundException;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

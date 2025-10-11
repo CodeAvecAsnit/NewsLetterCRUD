@@ -4,7 +4,7 @@ import com.news.lettercrud.Data.DTOs.NewsDisplayDTO;
 import com.news.lettercrud.Data.model.NewsLetter;
 import com.news.lettercrud.Services.model.NewsService;
 import com.news.lettercrud.Services.news.BasicNewsService;
-import com.news.lettercrud.exceptions.WrongAuthorException;
+import com.news.lettercrud.exceptions.custom.WrongAuthorException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;

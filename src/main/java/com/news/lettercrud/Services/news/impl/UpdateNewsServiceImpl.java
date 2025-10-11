@@ -6,7 +6,7 @@ import com.news.lettercrud.Data.model.NewsLetter;
 import com.news.lettercrud.Services.model.CategoryService;
 import com.news.lettercrud.Services.model.NewsService;
 import com.news.lettercrud.Services.news.UpdateNewsService;
-import com.news.lettercrud.exceptions.WrongAuthorException;
+import com.news.lettercrud.exceptions.custom.WrongAuthorException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.security.access.prepost.PreAuthorize;

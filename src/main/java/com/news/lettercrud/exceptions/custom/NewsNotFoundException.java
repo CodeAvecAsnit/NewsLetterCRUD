@@ -1,4 +1,4 @@
-package com.news.lettercrud.exceptions;
+package com.news.lettercrud.exceptions.custom;
 
 
 public class NewsNotFoundException extends RuntimeException{

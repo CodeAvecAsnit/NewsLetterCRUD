@@ -3,7 +3,7 @@ package com.news.lettercrud.Services.model.impl;
 import com.news.lettercrud.Data.model.NewsCategory;
 import com.news.lettercrud.Repositories.NewsCategoryRepository;
 import com.news.lettercrud.Services.model.CategoryService;
-import com.news.lettercrud.exceptions.ResourceDoesNotExistException;
+import com.news.lettercrud.exceptions.custom.ResourceDoesNotExistException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

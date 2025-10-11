@@ -8,7 +8,6 @@ import com.news.lettercrud.Services.model.CategoryService;
 import com.news.lettercrud.Services.model.NewsService;
 import com.news.lettercrud.Services.model.UserService;
 import com.news.lettercrud.Services.news.AddNewsService;
-import com.news.lettercrud.exceptions.ResourceDoesNotExistException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.security.access.prepost.PreAuthorize;

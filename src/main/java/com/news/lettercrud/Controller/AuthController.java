@@ -8,6 +8,7 @@ import com.news.lettercrud.Services.auth.impl.AccountRegistrationFacade;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
@@ -69,6 +70,7 @@ public class AuthController {
     public ResponseEntity<APIResponseDTO> verifySignup(@Valid @RequestBody MailVerificationDTO dto) {
 
         VerificationResult result =       accountRegistrationFacade.verifyAndCompleteRegistration(dto);
+        //TO DO : give jwt as well as the signup response
 
         // SUCCESS case - code 1
         if (result == VerificationResult.SUCCESS) {
@@ -117,7 +119,8 @@ public class AuthController {
 
 
 
-    @Operation(summary = "Remove the token from HTTP only cookie")
+    @Operation(summary = "Remove the token from HTTP only cookie",
+    security =  @SecurityRequirement(name="bearerAuth"))
     @GetMapping("/log-out")
     public String logout(HttpServletResponse response){
         accountRegistrationFacade.expireCookie(response);

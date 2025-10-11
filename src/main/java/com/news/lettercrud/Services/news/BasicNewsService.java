@@ -1,14 +1,15 @@
 package com.news.lettercrud.Services.news;
 
+import com.news.lettercrud.Data.DTOs.NewsDisplayDTO;
 import com.news.lettercrud.Data.model.NewsLetter;
 
 import java.util.List;
 
 public interface BasicNewsService {
 
-    List<NewsLetter> getTodayNews();
+    List<NewsDisplayDTO> getTodayNews();
 
-    NewsLetter getNewsById(int id);
+    NewsDisplayDTO getNewsById(int id);
 
     void deleteNewsByUser(long userId, int newsId);
 

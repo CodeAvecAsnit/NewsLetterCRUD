@@ -27,4 +27,16 @@ public class CategoryServiceImpl implements CategoryService {
     public NewsCategory createNewCategory(NewsCategory newsCategory) {
         return newsCategoryRepository.save(newsCategory);
     }
+
+    @Override
+    public NewsCategory findByCategoryNameOrCreate(String category) {
+        return newsCategoryRepository.findByCategoryName(category).
+                orElseGet(()->{
+                    NewsCategory cat = new NewsCategory();
+                    cat.setCategoryName(category);
+                    return newsCategoryRepository.save(cat);
+                        }
+                        );
+
+    }
 }

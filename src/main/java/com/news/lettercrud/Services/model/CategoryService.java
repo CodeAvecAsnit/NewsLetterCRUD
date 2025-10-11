@@ -5,4 +5,5 @@ import com.news.lettercrud.Data.model.NewsCategory;
 public interface CategoryService {
     NewsCategory findByCategoryName(String category);
     NewsCategory createNewCategory(NewsCategory newsCategory);
+    NewsCategory findByCategoryNameOrCreate(String category);
 }

@@ -6,8 +6,6 @@ import com.news.lettercrud.Data.model.NewsLetter;
 import com.news.lettercrud.Services.model.CategoryService;
 import com.news.lettercrud.Services.model.NewsService;
 import com.news.lettercrud.Services.news.UpdateNewsService;
-import com.news.lettercrud.exceptions.ResourceDoesNotExistException;
-import com.news.lettercrud.exceptions.UnknownException;
 import com.news.lettercrud.exceptions.WrongAuthorException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -46,22 +44,12 @@ public class UpdateNewsServiceImpl implements UpdateNewsService {
     }
 
     private void updateNews(NewsLetter oldNews,CreateORUpdateNewsDTO newData){
-        NewsCategory category = null;
-        try{
-            category = categoryService.findByCategoryName(newData.getNewsCategory());
-        }catch (ResourceDoesNotExistException ex){
-            NewsCategory newsCategory = new NewsCategory();
-            newsCategory.setCategoryName(newData.getNewsCategory());
-            category = categoryService.createNewCategory(newsCategory);
-        }catch (Exception ex){
-            throw new UnknownException();
-        }finally {
-            oldNews.setNewsCategory(category);
-            oldNews.setNewsHeadLine(newData.getHeadline());
-            oldNews.setImageUrl(newData.getImageURL());
-            oldNews.setNewsBody(newData.getNewsBody());
-            newsService.postNews(oldNews);
-        }
+        NewsCategory cat = categoryService.findByCategoryNameOrCreate(newData.getNewsCategory());
+        oldNews.setNewsCategory(cat);
+        oldNews.setNewsHeadLine(newData.getHeadline());
+        oldNews.setImageUrl(newData.getImageURL());
+        oldNews.setNewsBody(newData.getNewsBody());
+        newsService.postNews(oldNews);
     }
 
 }

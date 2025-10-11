@@ -1,5 +1,6 @@
 package com.news.lettercrud.Services.news.impl;
 
+import com.news.lettercrud.Data.DTOs.NewsDisplayDTO;
 import com.news.lettercrud.Data.model.NewsLetter;
 import com.news.lettercrud.Services.model.NewsService;
 import com.news.lettercrud.Services.news.BasicNewsService;
@@ -7,7 +8,6 @@ import com.news.lettercrud.exceptions.WrongAuthorException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
-
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -21,15 +21,16 @@ public class BasicNewsServiceImpl implements BasicNewsService {
     }
 
     @Override
-    public List<NewsLetter> getTodayNews(){
+    public List<NewsDisplayDTO> getTodayNews(){
         LocalDateTime today = LocalDateTime.now();
         LocalDateTime yesterday = today.minusDays(1);
-        return newsService.getTodayNews(yesterday,today);
+        return newsService.getTodayNews(yesterday,today).
+                stream().map(NewsDisplayDTO::build).toList();
     }
 
     @Override
-    public NewsLetter getNewsById(int id){
-        return newsService.findById(id);
+    public NewsDisplayDTO getNewsById(int id){
+       return NewsDisplayDTO.build(newsService.findById(id));
     }
 
 

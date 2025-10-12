@@ -12,7 +12,9 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 
-
+/**
+ * @author : Asnit Bakhati
+ */
 @Service
 public class UpdateNewsServiceImpl implements UpdateNewsService {
 
@@ -26,7 +28,9 @@ public class UpdateNewsServiceImpl implements UpdateNewsService {
         this.categoryService=categoryService;
     }
 
-
+    /**
+     * Allows creator of the NewsLetter to make changes in it.
+     */
     @Override
     public void updateNews(int newsId,CreateORUpdateNewsDTO newData,long userId){
        NewsLetter oldNews = newsService.findById(newsId);
@@ -36,6 +40,9 @@ public class UpdateNewsServiceImpl implements UpdateNewsService {
        updateNews(oldNews,newData);
     }
 
+    /**
+     * Allows the SUPER_ADMIN to make changes in any NewsLetter.
+     */
     @Override
     @PreAuthorize("hasAuthority('SUPER_ADMIN')")
     public void updateNewsByAdmin(int newsId,CreateORUpdateNewsDTO newData){
@@ -43,6 +50,9 @@ public class UpdateNewsServiceImpl implements UpdateNewsService {
         updateNews(oldNews,newData);
     }
 
+    /**
+     * Private function that handles the updating of NewsLetter
+     */
     private void updateNews(NewsLetter oldNews,CreateORUpdateNewsDTO newData){
         NewsCategory cat = categoryService.findByCategoryNameOrCreate(newData.getNewsCategory());
         oldNews.setNewsCategory(cat);

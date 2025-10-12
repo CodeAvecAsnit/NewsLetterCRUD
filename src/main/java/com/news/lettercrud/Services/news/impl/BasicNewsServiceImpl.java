@@ -11,6 +11,9 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
 import java.util.List;
 
+/**
+ * @author : Asnit Bakhati
+ */
 @Service
 public class BasicNewsServiceImpl implements BasicNewsService {
     private final NewsService newsService;
@@ -20,6 +23,9 @@ public class BasicNewsServiceImpl implements BasicNewsService {
         this.newsService = newsService;
     }
 
+    /**
+     * Fetches NewsLetter that were created in last 24 hours
+     */
     @Override
     public List<NewsDisplayDTO> getTodayNews(){
         LocalDateTime today = LocalDateTime.now();
@@ -28,6 +34,9 @@ public class BasicNewsServiceImpl implements BasicNewsService {
                 stream().map(NewsDisplayDTO::build).toList();
     }
 
+    /**
+     * Fetches the News by NewsId
+     */
     @Override
     public NewsDisplayDTO getNewsById(int id){
        return NewsDisplayDTO.build(newsService.findById(id));
@@ -35,6 +44,9 @@ public class BasicNewsServiceImpl implements BasicNewsService {
 
 
 
+    /**
+     * Allows the creator of the news to delete the news
+     */
     @Override
     public void deleteNewsByUser(long userId, int newsId){
         NewsLetter newsLetter = newsService.findById(newsId);
@@ -44,6 +56,9 @@ public class BasicNewsServiceImpl implements BasicNewsService {
         newsService.deletenews(newsLetter);
     }
 
+    /**
+     * Allows SUPER_ADMIN to delete any news
+     */
     @Override
     @PreAuthorize("hasAuthority('SUPER_ADMIN')")
     public void deleteByADMIN(int newsId){

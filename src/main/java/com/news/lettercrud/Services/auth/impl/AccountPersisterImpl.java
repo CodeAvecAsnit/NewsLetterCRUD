@@ -11,11 +11,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+/**
+ * @author : Asnit Bakhati
+ */
 @Service
 public class AccountPersisterImpl implements AccountPersister {
     private final UserAccountRepository userAccountRepository;
     private final CompanyRepository companyRepository;
     private final PasswordEncoder passwordEncoder;
+
 
     @Autowired
     public AccountPersisterImpl(
@@ -28,13 +32,17 @@ public class AccountPersisterImpl implements AccountPersister {
         this.passwordEncoder = passwordEncoder;
     }
 
+
+    /**
+     * saves the account information as UserAccount or Company Account
+     */
     @Override
-    public void persist(BaseAccount account) {
+    public BaseAccount persist(BaseAccount account) {
         account.setPassword(passwordEncoder.encode(account.getPassword()));
         if (account.getRole() == Role.COMPANY) {
-            companyRepository.save((CompanyAccount) account);
+            return (BaseAccount) companyRepository.save((CompanyAccount) account);
         } else {
-            userAccountRepository.save((UserAccount) account);
+            return (BaseAccount) userAccountRepository.save((UserAccount) account);
         }
     }
 }

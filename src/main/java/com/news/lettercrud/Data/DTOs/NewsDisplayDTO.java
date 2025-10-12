@@ -5,7 +5,9 @@ import com.news.lettercrud.Data.Enum.Role;
 import com.news.lettercrud.Data.model.BaseAccount;
 import com.news.lettercrud.Data.model.CompanyAccount;
 import com.news.lettercrud.Data.model.NewsLetter;
+import io.swagger.v3.oas.annotations.media.Schema;
 
+@Schema(description = "Data fields that can be seen by user")
 public class NewsDisplayDTO {
     private String headline;
     private String newsDate;

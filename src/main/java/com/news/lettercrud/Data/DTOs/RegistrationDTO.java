@@ -2,7 +2,9 @@ package com.news.lettercrud.Data.DTOs;
 
 import com.news.lettercrud.Data.Enum.Role;
 import com.news.lettercrud.Data.model.UserAccount;
+import io.swagger.v3.oas.annotations.media.Schema;
 
+@Schema(description = "Required for User Registration")
 public class RegistrationDTO {
     private String userName;
     private String email;

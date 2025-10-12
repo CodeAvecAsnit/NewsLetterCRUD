@@ -15,7 +15,9 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-
+/**
+ * @author : Asnit Bakhati
+ */
 
 @Service
 public class LoginServiceImpl implements LoginService {
@@ -35,18 +37,34 @@ public class LoginServiceImpl implements LoginService {
         this.jwtUtils = jwtUtils;
     }
 
+
+    /**
+     *
+     * @param logUser contains email and password
+     * @return true if password matches false if password doesn't match
+     */
+
     private boolean checkPassword(LoginDTO logUser) {
         UserDetails user = userDetailsImplService.loadUserByUsername(logUser.getEmail());
         return passwordEncoder.matches(logUser.getPassword(), user.getPassword());
     }
 
+
+
+    /**
+     * this function used to initiate log in a user and create a session
+     * @param loginData contains email and password required for authorization
+     * @param httpResponse is used to attach jwt token in http only cookie
+     * @return responseCode, Jwt token(not safe) , message
+     */
+
     @Override
-    public LoginResponseDT0 login(LoginDTO request, HttpServletResponse httpResponse) {
+    public LoginResponseDT0 login(LoginDTO loginData, HttpServletResponse httpResponse) {
         //TODO : Implement a Password rate limiting
         try {
-            boolean matcher = checkPassword(request);
+            boolean matcher = checkPassword(loginData);
             if (matcher) {
-               String token = jwtUtils.generateJwtTokens((UserDetailsImpl)userDetailsImplService.loadUserByUsername(request.getEmail()));
+               String token = jwtUtils.generateJwtTokens((UserDetailsImpl)userDetailsImplService.loadUserByUsername(loginData.getEmail()));
                attachJwt(httpResponse,token);
                 return new LoginResponseDT0(200, token, "Success");
             } else return new LoginResponseDT0(403, "No token", "Invalid Password or Email");
@@ -55,6 +73,8 @@ public class LoginServiceImpl implements LoginService {
             return new LoginResponseDT0(403, "No token", "Invalid Password or Email");
         }
     }
+
+
 
     private void attachJwt(HttpServletResponse response,String jwt){
         Cookie cookie = new Cookie("access_token",jwt);

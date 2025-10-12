@@ -1,5 +1,6 @@
 package com.news.lettercrud.Data.DTOs;
 
+//Internal Class flow
 public class VerificationCode {
 
         private final int code;

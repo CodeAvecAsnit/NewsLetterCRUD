@@ -4,7 +4,9 @@ package com.news.lettercrud.Data.DTOs;
 import com.news.lettercrud.Data.model.BaseAccount;
 import com.news.lettercrud.Data.model.NewsCategory;
 import com.news.lettercrud.Data.model.NewsLetter;
+import io.swagger.v3.oas.annotations.media.Schema;
 
+@Schema(description = "Fields required to create or update news")
 public class CreateORUpdateNewsDTO {
     public String headline;
     public String imageURL;

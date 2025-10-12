@@ -13,6 +13,9 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 
+/**
+ * @author : Asnit Bakhati
+ */
 @Service
 public class AddNewsServiceImpl implements AddNewsService {
 
@@ -28,7 +31,9 @@ public class AddNewsServiceImpl implements AddNewsService {
         this.newsService = newsService;
         this.categoryService = categoryService;
     }
-
+    /**
+     * Creates a NewsLetter. Cannot be initiated by USER
+     */
     @Override
     @PreAuthorize("hasAnyAuthority('ADMIN','COMPANY','SUPER_ADMIN')")
     public boolean postNews(CreateORUpdateNewsDTO data, long userId) {

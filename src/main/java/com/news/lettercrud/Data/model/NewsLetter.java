@@ -1,6 +1,5 @@
 package com.news.lettercrud.Data.model;
 
-import com.news.lettercrud.Data.DTOs.CreateORUpdateNewsDTO;
 import jakarta.persistence.*;
 
 @Entity

@@ -7,6 +7,9 @@ import com.news.lettercrud.exceptions.custom.ResourceDoesNotExistException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+/**
+ * @author : Asnit Bakhati
+ */
 @Service
 public class CategoryServiceImpl implements CategoryService {
 

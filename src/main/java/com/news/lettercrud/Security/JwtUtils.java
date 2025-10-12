@@ -8,11 +8,13 @@ import org.antlr.v4.runtime.misc.Utils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 import javax.crypto.SecretKey;
 import java.util.Date;
 
+/**
+ * @author : Asnit Bakhati
+ */
 @Component
 public class JwtUtils {
 

@@ -32,6 +32,9 @@ public class RegistrationServiceImpl implements RegistrationService {
         return !userExists;
     }
 
+    /**
+     * Checks if email is already registers and throws Error if found
+     */
     private void createAccount(String email) {
         if (!isEmailAvailable(email)) {
             throw new EmailAlreadyExistsException("Email already registered: " + email);

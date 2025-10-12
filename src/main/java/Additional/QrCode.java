@@ -13,6 +13,7 @@ import java.nio.file.FileSystems;
 import java.nio.file.Path;
 import java.util.Enumeration;
 
+
 public class QrCode {
     public static void main(String[] args) throws Exception {
         StringBuilder text = new StringBuilder("http://");

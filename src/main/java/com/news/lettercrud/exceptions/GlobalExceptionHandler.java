@@ -8,6 +8,10 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 
 import java.util.Map;
 
+/**
+ * @author : Asnit Bakhati
+ */
+
 @ControllerAdvice
 public class GlobalExceptionHandler {
 
@@ -36,6 +40,5 @@ public class GlobalExceptionHandler {
     public ResponseEntity<Map<String,String>> handleUnauthorizedAccess(WrongAuthorException e){
         return ResponseEntity.status(401).body(Map.of("error","unauthorized"));
     }
-
 
 }

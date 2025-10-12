@@ -1,11 +1,14 @@
 package com.news.lettercrud.Services.auth.impl;
 
 import com.news.lettercrud.Data.DTOs.LoginAttempt;
+import com.news.lettercrud.Data.DTOs.ResultDTO;
 import com.news.lettercrud.Data.DTOs.VerificationCode;
 import com.news.lettercrud.Data.Enum.VerificationResult;
 import com.news.lettercrud.Data.model.BaseAccount;
 import com.news.lettercrud.Repositories.PendingAccountRepository;
 import com.news.lettercrud.Repositories.VerificationCodeRepository;
+import com.news.lettercrud.Security.JwtUtils;
+import com.news.lettercrud.Security.UserDetailsImpl;
 import com.news.lettercrud.Services.auth.AccountPersister;
 import com.news.lettercrud.Services.auth.VerificationCodeGenerator;
 import com.news.lettercrud.Services.auth.VerificationService;
@@ -17,7 +20,12 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
+import javax.xml.transform.Result;
 import java.util.Optional;
+
+/**
+ * @author : Asnit Bakhati
+ */
 
 @Service
 public class VerificationServiceImpl implements VerificationService {
@@ -29,6 +37,7 @@ public class VerificationServiceImpl implements VerificationService {
     private final VerificationCodeGenerator codeGenerator;
     private final NotificationService notificationService;
     private final AccountPersister accountPersister;
+    private final JwtUtils jwtUtils;
 
     @Autowired
     public VerificationServiceImpl(
@@ -36,15 +45,19 @@ public class VerificationServiceImpl implements VerificationService {
             PendingAccountRepository accountRepository,
             VerificationCodeGenerator codeGenerator,
             @Qualifier("mailServiceImpl") NotificationService notificationService,
-            AccountPersister accountPersister
+            AccountPersister accountPersister, JwtUtils jwtUtils
     ) {
         this.codeRepository = codeRepository;
         this.accountRepository = accountRepository;
         this.codeGenerator = codeGenerator;
         this.notificationService = notificationService;
         this.accountPersister = accountPersister;
+        this.jwtUtils = jwtUtils;
     }
 
+    /**
+     * Stores account info in cache and also sends the verification mail
+     */
     @Override
     @Async
     public void sendVerificationCode(BaseAccount account) {
@@ -70,11 +83,14 @@ public class VerificationServiceImpl implements VerificationService {
         }
     }
 
+    /**
+     * Matches the verification result and persists the account
+     */
     @Override
-    public VerificationResult verify(String email, int code) {
+    public ResultDTO verify(String email, int code) {
         Optional<LoginAttempt> attemptOpt = codeRepository.find(email);
         if (attemptOpt.isEmpty()) {
-            return VerificationResult.CODE_EXPIRED;
+            return new ResultDTO(VerificationResult.CODE_EXPIRED);
         }
 
         LoginAttempt attempt = attemptOpt.get();
@@ -87,32 +103,40 @@ public class VerificationServiceImpl implements VerificationService {
         }
     }
 
-    private VerificationResult handleSuccessfulVerification(String email) {
+
+    /**
+     * Persists the account if verification is successful
+     */
+    private ResultDTO handleSuccessfulVerification(String email) {
         codeRepository.remove(email);
 
         Optional<BaseAccount> accountOpt = accountRepository.find(email);
         if (accountOpt.isEmpty()) {
-            return VerificationResult.ACCOUNT_NOT_FOUND;
+            return new ResultDTO(VerificationResult.ACCOUNT_NOT_FOUND);
         }
 
         BaseAccount account = accountOpt.get();
         accountRepository.remove(email);
 
         try {
-            accountPersister.persist(account);
+            BaseAccount acc = accountPersister.persist(account);
+            String jwt = jwtUtils.generateJwtTokens(UserDetailsImpl.build(acc));
             logger.info("Account verified and persisted successfully: {}", email);
-            return VerificationResult.SUCCESS;
+            return new ResultDTO(VerificationResult.SUCCESS,jwt);
         } catch (Exception e) {
             logger.error("Failed to persist account: {}", email, e);
             throw new RuntimeException("Failed to persist account", e);
         }
     }
 
-    private VerificationResult mapAttemptResultToVerificationResult(int code) {
+    /**
+     *  Maps the verification Result to different result states
+     */
+    private ResultDTO mapAttemptResultToVerificationResult(int code) {
         return switch (code) {
-            case 2 -> VerificationResult.CODE_MISMATCH;
-            case 3 -> VerificationResult.TOO_MANY_ATTEMPTS;
-            default -> VerificationResult.CODE_MISMATCH;
+            case 2 -> new ResultDTO(VerificationResult.CODE_MISMATCH);
+            case 3 -> new ResultDTO(VerificationResult.TOO_MANY_ATTEMPTS);
+            default ->new ResultDTO(VerificationResult.CODE_MISMATCH);
         };
     }
 }

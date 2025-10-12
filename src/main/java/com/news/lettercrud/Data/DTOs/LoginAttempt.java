@@ -1,7 +1,6 @@
 package com.news.lettercrud.Data.DTOs;
 
 //Internal DTO
-
 public class LoginAttempt {
     private int loginAttempts;
     private final int code;

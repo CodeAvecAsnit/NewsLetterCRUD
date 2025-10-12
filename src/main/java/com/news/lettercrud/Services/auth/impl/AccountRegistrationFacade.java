@@ -3,6 +3,7 @@ package com.news.lettercrud.Services.auth.impl;
 import com.news.lettercrud.Data.DTOs.CompanyRegistrationDTO;
 import com.news.lettercrud.Data.DTOs.MailVerificationDTO;
 import com.news.lettercrud.Data.DTOs.RegistrationDTO;
+import com.news.lettercrud.Data.DTOs.ResultDTO;
 import com.news.lettercrud.Data.Enum.VerificationResult;
 import com.news.lettercrud.Data.model.BaseAccount;
 import com.news.lettercrud.Services.auth.RegistrationService;
@@ -62,15 +63,15 @@ public class AccountRegistrationFacade {
     /**
      * Verifies the code and completes registration
      */
-    public VerificationResult verifyAndCompleteRegistration(MailVerificationDTO dto) {
+    public ResultDTO verifyAndCompleteRegistration(MailVerificationDTO dto) {
         logger.info("Verifying registration for: {}", dto.getEmail());
 
-        VerificationResult result = verificationService.verify(dto.getEmail(), dto.getCode());
+        ResultDTO result = verificationService.verify(dto.getEmail(), dto.getCode());
 
-        if (result == VerificationResult.SUCCESS) {
+        if (result.getVerificationResult() == VerificationResult.SUCCESS) {
             logger.info("Registration completed successfully for: {}", dto.getEmail());
         } else {
-            logger.warn("Verification failed for: {} - Reason: {}", dto.getEmail(), result.getMessage());
+            logger.warn("Verification failed for: {} - Reason: {}", dto.getEmail());
         }
 
         return result;

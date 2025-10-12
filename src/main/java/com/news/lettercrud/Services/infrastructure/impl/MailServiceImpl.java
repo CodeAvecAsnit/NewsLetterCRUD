@@ -10,6 +10,9 @@ import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.stereotype.Service;
 
+/**
+ * @author : Asnit Bakhati
+ */
 @Service
 @EnableAsync
 public class MailServiceImpl implements NotificationService {
@@ -23,6 +26,9 @@ public class MailServiceImpl implements NotificationService {
         this.javaMailSender = javaMailSender;
     }
 
+    /**
+     * @param email used to send mail verification message to the user
+     */
     @Override
     @Async
     public void  sendMail(String email,int code){
@@ -30,7 +36,7 @@ public class MailServiceImpl implements NotificationService {
         try{
             message.setFrom("furnituremandu@gmail.com");
             message.setTo(email);
-            message.setSubject("Verification Code for Geneva Clothing");
+            message.setSubject("Verification Code for News CRUD");
             String body = "The verification code is "+code+". Please do not share this code.";
             message.setText(body);
             javaMailSender.send(message);

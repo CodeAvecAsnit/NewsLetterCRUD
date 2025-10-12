@@ -16,6 +16,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+/**
+ * @author : Asnit Bakhati
+ */
 
 @RestController
 @RequestMapping("/api/v1")
@@ -38,5 +41,4 @@ public class LoginController {
         System.out.println("SIGN IN endpoint hit");
         return ResponseEntity.ok(loginService.login(loginUser,response));
     }
-
 }

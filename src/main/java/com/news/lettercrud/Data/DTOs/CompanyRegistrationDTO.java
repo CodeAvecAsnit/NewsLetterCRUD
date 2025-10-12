@@ -3,25 +3,25 @@ package com.news.lettercrud.Data.DTOs;
 import com.news.lettercrud.Data.Enum.CompanyType;
 import com.news.lettercrud.Data.Enum.Role;
 import com.news.lettercrud.Data.model.CompanyAccount;
+import io.swagger.v3.oas.annotations.media.Schema;
 
+@Schema(description = "Data required for company Registration")
 public class CompanyRegistrationDTO {
     private String email;
     private String password;
     private String websiteURL;
     private String companyName;
-    private String companyNumber;
     private String address;
     private String companyType;
     private String logoURL;
     private String companySize;
     private String phoneNo;
 
-    public CompanyRegistrationDTO(String email, String password, String websiteURL, String companyName, String companyNumber, String address, String companyType, String logoURL, String companySize, String phoneNo) {
+    public CompanyRegistrationDTO(String email, String password, String websiteURL, String companyName, String address, String companyType, String logoURL, String companySize, String phoneNo) {
         this.email = email;
         this.password = password;
         this.websiteURL = websiteURL;
         this.companyName = companyName;
-        this.companyNumber = companyNumber;
         this.address = address;
         this.companyType = companyType;
         this.logoURL = logoURL;
@@ -72,13 +72,6 @@ public class CompanyRegistrationDTO {
         this.companyName = companyName;
     }
 
-    public String getCompanyNumber() {
-        return companyNumber;
-    }
-
-    public void setCompanyNumber(String companyNumber) {
-        this.companyNumber = companyNumber;
-    }
 
     public String getAddress() {
         return address;

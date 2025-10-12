@@ -17,6 +17,9 @@ public class SecureVerificationCodeGenerator implements VerificationCodeGenerato
         this.secureRandom = secureRandom;
     }
 
+    /**
+     * Generates and Random One Time code send to user in mail for verification
+     */
     @Override
     public VerificationCode generate() {
         int code = secureRandom.nextInt(100000, 1000000);

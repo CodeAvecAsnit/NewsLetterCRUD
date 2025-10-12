@@ -1,8 +1,5 @@
 package com.news.lettercrud.Controller;
-import com.news.lettercrud.Data.DTOs.APIResponseDTO;
-import com.news.lettercrud.Data.DTOs.CompanyRegistrationDTO;
-import com.news.lettercrud.Data.DTOs.MailVerificationDTO;
-import com.news.lettercrud.Data.DTOs.RegistrationDTO;
+import com.news.lettercrud.Data.DTOs.*;
 import com.news.lettercrud.Data.Enum.VerificationResult;
 import com.news.lettercrud.Services.auth.impl.AccountRegistrationFacade;
 import io.swagger.v3.oas.annotations.Operation;
@@ -17,9 +14,13 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+/**
+ * @author : Asnit Bakhati
+ */
+
 @RestController
 @RequestMapping("/api/v1")
-@Tag(name = "Login Controller", description = "Handles User and Company registration and verification")
+@Tag(name = "Auth Controller", description = "Handles User and Company registration and verification")
 public class AuthController {
 
     private final AccountRegistrationFacade accountRegistrationFacade;
@@ -69,13 +70,14 @@ public class AuthController {
     @PostMapping("signup/verify")
     public ResponseEntity<APIResponseDTO> verifySignup(@Valid @RequestBody MailVerificationDTO dto) {
 
-        VerificationResult result =       accountRegistrationFacade.verifyAndCompleteRegistration(dto);
-        //TO DO : give jwt as well as the signup response
+        ResultDTO resultDTO = accountRegistrationFacade.verifyAndCompleteRegistration(dto);
+        VerificationResult result = resultDTO.getVerificationResult();
+        //TODO : give jwt as well as the signup response
 
         // SUCCESS case - code 1
         if (result == VerificationResult.SUCCESS) {
             return ResponseEntity.ok(
-                    new APIResponseDTO("Successfully Registered", "dummyJwt")
+                    new APIResponseDTO("Successfully Registered", resultDTO.getToken())
             );
         }
 

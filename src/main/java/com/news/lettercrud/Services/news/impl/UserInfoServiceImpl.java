@@ -20,6 +20,9 @@ public class UserInfoServiceImpl implements UserInfoService {
         this.userService = userService;
     }
 
+    /**
+     * Using UserId fetches all the NewsLetter created by the USER.
+     */
     @Override
     public Set<NewsLetter> getUsersNews(long userId){
         BaseAccount author = userService.findById(userId);

@@ -7,6 +7,10 @@ import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.security.SecurityScheme;
 import org.springframework.context.annotation.Configuration;
 
+/**
+ * @author : Asnit Bakhati
+ */
+
 @Configuration
 @OpenAPIDefinition(
         info = @Info(title = "My API", version = "v1"),

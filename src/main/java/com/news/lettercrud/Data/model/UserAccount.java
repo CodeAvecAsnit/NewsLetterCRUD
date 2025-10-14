@@ -6,6 +6,9 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.Table;
 
 
+/**
+ * @author : Asnit Bakhati
+ */
 @Entity
 @Table(name = "user_accounts")
 public class UserAccount extends BaseAccount {

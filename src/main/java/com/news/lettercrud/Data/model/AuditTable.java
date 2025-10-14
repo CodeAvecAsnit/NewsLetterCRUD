@@ -7,7 +7,9 @@ import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.LocalDateTime;
 
-
+/**
+ * @author : Asnit Bakhati
+ */
 @MappedSuperclass
 public abstract class AuditTable {
     @CreationTimestamp

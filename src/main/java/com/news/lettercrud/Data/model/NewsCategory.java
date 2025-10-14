@@ -4,6 +4,9 @@ import jakarta.persistence.*;
 
 import java.util.List;
 
+/**
+ * @author : Asnit Bakhati
+ */
 @Entity
 public class NewsCategory {
 

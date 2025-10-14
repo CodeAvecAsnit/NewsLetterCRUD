@@ -120,7 +120,6 @@ public class AuthController {
     }
 
 
-
     @Operation(summary = "Remove the token from HTTP only cookie",
     security =  @SecurityRequirement(name="bearerAuth"))
     @GetMapping("/log-out")

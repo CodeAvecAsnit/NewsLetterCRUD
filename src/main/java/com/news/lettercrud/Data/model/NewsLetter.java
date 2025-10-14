@@ -2,6 +2,9 @@ package com.news.lettercrud.Data.model;
 
 import jakarta.persistence.*;
 
+/**
+ * @author : Asnit Bakhati
+ */
 @Entity
 public class NewsLetter extends AuditTable{
     @Id

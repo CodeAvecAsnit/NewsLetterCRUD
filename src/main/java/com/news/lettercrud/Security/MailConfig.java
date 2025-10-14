@@ -8,6 +8,10 @@ import org.springframework.mail.javamail.JavaMailSenderImpl;
 
 import java.util.Properties;
 
+/**
+ * @author : Asnit Bakhati
+ */
+
 @Configuration
 public class MailConfig {
 

@@ -7,6 +7,9 @@ import jakarta.validation.constraints.NotBlank;
 
 import java.util.Set;
 
+/**
+ * @author : Asnit Bakhati
+ */
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
 @Table(name = "base_accounts")

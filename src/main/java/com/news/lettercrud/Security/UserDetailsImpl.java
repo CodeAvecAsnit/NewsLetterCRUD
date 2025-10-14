@@ -9,6 +9,10 @@ import java.util.Collection;
 import java.util.Collections;
 
 
+/**
+ * @author : Asnit Bakhati
+ */
+
 public class UserDetailsImpl implements UserDetails {
 
     private Long id ;

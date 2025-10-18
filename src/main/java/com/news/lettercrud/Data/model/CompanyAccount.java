@@ -5,6 +5,9 @@ import com.news.lettercrud.Data.Enum.Role;
 import jakarta.persistence.*;
 
 
+/**
+ * @author : Asnit Bakhati
+ */
 @Entity
 @Table(name = "company_accounts")
 public class CompanyAccount extends BaseAccount{
@@ -28,7 +31,7 @@ public class CompanyAccount extends BaseAccount{
     private String companySize;
 
     public CompanyAccount(){
-        this.setRole(Role.COMPANY_ROLE);
+        this.setRole(Role.COMPANY);
     }
 
     public String getCompanyName() {

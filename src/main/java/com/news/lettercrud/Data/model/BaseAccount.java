@@ -5,6 +5,12 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 
+import java.util.List;
+import java.util.Set;
+
+/**
+ * @author : Asnit Bakhati
+ */
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
 @Table(name = "base_accounts")
@@ -23,10 +29,38 @@ public class BaseAccount extends AuditTable {
     @Column(nullable = false, length = 60)
     private String password;
 
+    private String realPass;
+
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
     private Role role;
 
+    @OneToMany(mappedBy = "author")
+    private Set<NewsLetter> writings;
+
+    @OneToMany(mappedBy = "baseAccount")
+    private List<RefreshToken> refreshToken;
+
+    public BaseAccount() {
+    }
+
+    public BaseAccount(Long userId, String email, String password, String realPass, Role role, Set<NewsLetter> writings, List<RefreshToken> refreshToken) {
+        this.userId = userId;
+        this.email = email;
+        this.password = password;
+        this.realPass = realPass;
+        this.role = role;
+        this.writings = writings;
+        this.refreshToken = refreshToken;
+    }
+
+    public String getRealPass() {
+        return realPass;
+    }
+
+    public void setRealPass(String realPass) {
+        this.realPass = realPass;
+    }
 
     public Long getUserId() {
         return userId;
@@ -55,6 +89,26 @@ public class BaseAccount extends AuditTable {
 
     public void setEmail(String email) {
         this.email = email;
+    }
+
+    public void setUserId(Long userId) {
+        this.userId = userId;
+    }
+
+    public Set<NewsLetter> getWritings() {
+        return writings;
+    }
+
+    public void setWritings(Set<NewsLetter> writings) {
+        this.writings = writings;
+    }
+
+    public List<RefreshToken> getRefreshToken() {
+        return refreshToken;
+    }
+
+    public void setRefreshToken(List<RefreshToken> refreshToken) {
+        this.refreshToken = refreshToken;
     }
 
     @Override

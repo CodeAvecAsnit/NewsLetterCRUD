@@ -6,7 +6,9 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.Table;
 
 
-
+/**
+ * @author : Asnit Bakhati
+ */
 @Entity
 @Table(name = "user_accounts")
 public class UserAccount extends BaseAccount {
@@ -15,7 +17,7 @@ public class UserAccount extends BaseAccount {
     private String username;
 
     public UserAccount(){
-        this.setRole(Role.USER_ROLE);
+        this.setRole(Role.USER);
     }
 
     public String getUsername() {

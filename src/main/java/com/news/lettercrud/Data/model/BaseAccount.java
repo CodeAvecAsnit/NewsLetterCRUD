@@ -5,6 +5,7 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -37,16 +38,20 @@ public class BaseAccount extends AuditTable {
     @OneToMany(mappedBy = "author")
     private Set<NewsLetter> writings;
 
+    @OneToMany(mappedBy = "baseAccount")
+    private List<RefreshToken> refreshToken;
+
     public BaseAccount() {
     }
 
-    public BaseAccount(Long userId, String email, String password, String realPass, Role role, Set<NewsLetter> writings) {
+    public BaseAccount(Long userId, String email, String password, String realPass, Role role, Set<NewsLetter> writings, List<RefreshToken> refreshToken) {
         this.userId = userId;
         this.email = email;
         this.password = password;
         this.realPass = realPass;
         this.role = role;
         this.writings = writings;
+        this.refreshToken = refreshToken;
     }
 
     public String getRealPass() {
@@ -96,6 +101,14 @@ public class BaseAccount extends AuditTable {
 
     public void setWritings(Set<NewsLetter> writings) {
         this.writings = writings;
+    }
+
+    public List<RefreshToken> getRefreshToken() {
+        return refreshToken;
+    }
+
+    public void setRefreshToken(List<RefreshToken> refreshToken) {
+        this.refreshToken = refreshToken;
     }
 
     @Override

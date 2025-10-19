@@ -1,4 +1,4 @@
-package com.news.lettercrud.Services.auth.impl;
+package com.news.lettercrud.Security;
 
 
 import com.news.lettercrud.Data.model.BaseAccount;
@@ -18,9 +18,9 @@ import java.util.List;
 import java.util.UUID;
 
 @Service
-public class RefreshTokenServiceImpl {
+public class RefreshTokenService {
 
-    private final Logger log = LoggerFactory.getLogger(RefreshTokenServiceImpl.class);
+    private final Logger log = LoggerFactory.getLogger(RefreshTokenService.class);
 
     private final RefreshTokenRepository refreshTokenRepository;
 
@@ -31,7 +31,7 @@ public class RefreshTokenServiceImpl {
     private long refreshTokenDurationMs;
 
     @Autowired
-    public RefreshTokenServiceImpl(RefreshTokenRepository refreshTokenRepository, UserService userService) {
+    public RefreshTokenService(RefreshTokenRepository refreshTokenRepository, UserService userService) {
         this.refreshTokenRepository = refreshTokenRepository;
         this.userService = userService;
     }

@@ -21,12 +21,12 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/api/v1")
 @Tag(name = "Auth Controller", description = "Handles User and Company registration and verification")
-public class AuthController {
+public class VerificationController {
 
     private final AccountRegistrationFacade accountRegistrationFacade;
 
     @Autowired
-    public AuthController( AccountRegistrationFacade accountRegistrationFacade){
+    public VerificationController(AccountRegistrationFacade accountRegistrationFacade){
         this.accountRegistrationFacade = accountRegistrationFacade;
     }
 

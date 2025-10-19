@@ -6,6 +6,7 @@ import com.news.lettercrud.Services.auth.LoginService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,8 +38,10 @@ public class LoginController {
             @ApiResponse(responseCode = "403", description = "Password or Email Error. No JWT"),
             @ApiResponse(responseCode = "500", description = "Login Failed. No JWT")})
     @PostMapping("/sign_in")
-    public ResponseEntity<LoginResponseDT0> authenticateUser(@Valid @RequestBody LoginDTO loginUser, HttpServletResponse response){
+    public ResponseEntity<LoginResponseDT0> authenticateUser(@Valid @RequestBody LoginDTO loginUser,
+                                                             HttpServletResponse response,
+                                                             HttpServletRequest request){
         System.out.println("SIGN IN endpoint hit");
-        return ResponseEntity.ok(loginService.login(loginUser,response));
+        return ResponseEntity.ok(loginService.login(loginUser,response,request));
     }
 }

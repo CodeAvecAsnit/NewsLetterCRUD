@@ -4,6 +4,8 @@ import com.news.lettercrud.Data.Enum.Role;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.util.List;
 import java.util.Set;
@@ -11,6 +13,8 @@ import java.util.Set;
 /**
  * @author : Asnit Bakhati
  */
+@Setter
+@Getter
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
 @Table(name = "base_accounts")
@@ -18,7 +22,8 @@ public class BaseAccount extends AuditTable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long userId;
+    @Column(name = "user_id")
+    private Long id;
 
     @Email
     @NotBlank
@@ -38,14 +43,14 @@ public class BaseAccount extends AuditTable {
     @OneToMany(mappedBy = "author")
     private Set<NewsLetter> writings;
 
-    @OneToMany(mappedBy = "baseAccount")
+    @OneToMany(mappedBy = "user")
     private List<RefreshToken> refreshToken;
 
     public BaseAccount() {
     }
 
-    public BaseAccount(Long userId, String email, String password, String realPass, Role role, Set<NewsLetter> writings, List<RefreshToken> refreshToken) {
-        this.userId = userId;
+    public BaseAccount(Long id, String email, String password, String realPass, Role role, Set<NewsLetter> writings, List<RefreshToken> refreshToken) {
+        this.id = id;
         this.email = email;
         this.password = password;
         this.realPass = realPass;
@@ -54,67 +59,11 @@ public class BaseAccount extends AuditTable {
         this.refreshToken = refreshToken;
     }
 
-    public String getRealPass() {
-        return realPass;
-    }
-
-    public void setRealPass(String realPass) {
-        this.realPass = realPass;
-    }
-
-    public Long getUserId() {
-        return userId;
-    }
-
-
-    public Role getRole() {
-        return role;
-    }
-
-    public void setRole(Role role) {
-        this.role = role;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
-    public void setUserId(Long userId) {
-        this.userId = userId;
-    }
-
-    public Set<NewsLetter> getWritings() {
-        return writings;
-    }
-
-    public void setWritings(Set<NewsLetter> writings) {
-        this.writings = writings;
-    }
-
-    public List<RefreshToken> getRefreshToken() {
-        return refreshToken;
-    }
-
-    public void setRefreshToken(List<RefreshToken> refreshToken) {
-        this.refreshToken = refreshToken;
-    }
 
     @Override
     public String toString() {
         return "BaseAccount{" +
-                "userId=" + userId +
+                "id=" + id +
                 ", email='" + email + '\'' +
                 ", password='" + password + '\'' +
                 ", role=" + role +

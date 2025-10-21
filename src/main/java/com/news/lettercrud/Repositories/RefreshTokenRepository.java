@@ -13,7 +13,7 @@ import java.util.Optional;
  * @author : Asnit Bakhait
  */
 @Repository
-public interface RefreshTokenRepository extends JpaRepository<RefreshToken, Long> {
+public interface RefreshTokenRepository extends JpaRepository<RefreshToken, Integer> {
  Optional<RefreshToken> findByToken(String token);
  List<RefreshToken> findByUserId(Long userId);
  List<RefreshToken> findByUserIdAndIsRevokedFalse(Long userId);

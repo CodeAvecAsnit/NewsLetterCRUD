@@ -50,7 +50,7 @@ public class BasicNewsServiceImpl implements BasicNewsService {
     @Override
     public void deleteNewsByUser(long userId, int newsId){
         NewsLetter newsLetter = newsService.findById(newsId);
-        if(newsLetter.getAuthor().getUserId()!=userId){
+        if(newsLetter.getAuthor().getId()!=userId){
             throw new WrongAuthorException();
         }
         newsService.deletenews(newsLetter);

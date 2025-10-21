@@ -1,11 +1,11 @@
-package com.news.lettercrud;
+package com.news.lettercrud.Controller;
 
-import com.news.lettercrud.Data.DTOs.RefreshTokenRequest;
+import com.news.lettercrud.Data.DTOs.*;
 import com.news.lettercrud.Data.model.BaseAccount;
 import com.news.lettercrud.Data.model.RefreshToken;
 import com.news.lettercrud.Security.JwtUtils;
 import com.news.lettercrud.Security.RefreshTokenService;
-import com.news.lettercrud.Services.model.UserService;
+import com.news.lettercrud.Security.UserDetailsImpl;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
@@ -13,24 +13,23 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/v1/auth")
 @Slf4j
 public class AuthController {
-    private final UserService userService;
+
     private final JwtUtils jwtUtils;
     private final RefreshTokenService refreshTokenService;
     private final HttpServletRequest request;
 
     @Autowired
-    public AuthController(AuthenticationManager authenticationManager, UserService userService, JwtUtils jwtUtils, RefreshTokenService refreshTokenService, HttpServletRequest request) {
-        this.userService = userService;
+    public AuthController(JwtUtils jwtUtils, RefreshTokenService refreshTokenService, HttpServletRequest request) {
         this.jwtUtils = jwtUtils;
         this.refreshTokenService = refreshTokenService;
         this.request = request;
@@ -41,12 +40,13 @@ public class AuthController {
         try {
             RefreshToken refreshToken = refreshTokenService.validateRefreshToken(request.getRefreshToken());
             BaseAccount user = refreshToken.getUser();
+            UserDetailsImpl userDetails = UserDetailsImpl.build(user);
 
-            String newAccessToken = jwtUtils.generateAccessToken(user);
+            String newAccessToken = jwtUtils.generateJwtTokens(userDetails);
 
             return ResponseEntity.ok(AuthResponse.builder()
                     .userId(user.getId())
-                    .username(user.getUsername())
+                    .username(user.getEmail())
                     .accessToken(newAccessToken)
                     .refreshToken(request.getRefreshToken())
                     .tokenType("Bearer")
@@ -76,7 +76,7 @@ public class AuthController {
     public ResponseEntity<?> logoutAllDevices() {
         Long userId = SecurityContextHolder.getContext()
                 .getAuthentication()
-                .getPrincipal() instanceof User user ? user.getId() : null;
+                .getPrincipal() instanceof BaseAccount user ? user.getId() : null;
 
         if (userId == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED)

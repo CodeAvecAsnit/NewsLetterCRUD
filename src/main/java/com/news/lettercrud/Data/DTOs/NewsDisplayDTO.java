@@ -1,6 +1,6 @@
 package com.news.lettercrud.Data.DTOs;
 
-import Additional.DateUtils;
+import com.news.lettercrud.Additional.DateUtils;
 import com.news.lettercrud.Data.Enum.Role;
 import com.news.lettercrud.Data.model.BaseAccount;
 import com.news.lettercrud.Data.model.CompanyAccount;

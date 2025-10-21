@@ -2,6 +2,8 @@ package com.news.lettercrud.Data.model;
 
 import jakarta.persistence.*;
 import lombok.Builder;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.time.LocalDateTime;
 
@@ -9,10 +11,12 @@ import java.time.LocalDateTime;
  * @author :Asnit Bakhati
  */
 
+@Setter
+@Getter
 @Entity
 @Table(name = "refresh_tokens")
 @Builder
-public class RefreshToken {
+public class RefreshToken{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
@@ -51,62 +55,6 @@ public class RefreshToken {
         this.isRevoked = isRevoked;
         this.deviceInfo = deviceInfo;
         this.user = user;
-        this.createdAt = createdAt;
-    }
-
-    public int getId() {
-        return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
-    }
-
-    public String getToken() {
-        return token;
-    }
-
-    public void setToken(String token) {
-        this.token = token;
-    }
-
-    public LocalDateTime getExpiryDate() {
-        return expiryDate;
-    }
-
-    public void setExpiryDate(LocalDateTime expiryDate) {
-        this.expiryDate = expiryDate;
-    }
-
-    public Boolean getIsRevoked() {
-        return isRevoked;
-    }
-
-    public void setIsRevoked(Boolean revoked) {
-        isRevoked = revoked;
-    }
-
-    public String getDeviceInfo() {
-        return deviceInfo;
-    }
-
-    public void setDeviceInfo(String deviceInfo) {
-        this.deviceInfo = deviceInfo;
-    }
-
-    public BaseAccount getUser() {
-        return user;
-    }
-
-    public void setUser(BaseAccount user) {
-        this.user = user;
-    }
-
-    public LocalDateTime getCreatedAt() {
-        return createdAt;
-    }
-
-    public void setCreatedAt(LocalDateTime createdAt) {
         this.createdAt = createdAt;
     }
 

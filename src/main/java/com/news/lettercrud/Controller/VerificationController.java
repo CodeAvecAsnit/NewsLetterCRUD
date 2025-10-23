@@ -7,6 +7,8 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -68,7 +70,7 @@ public class VerificationController {
     })
 
     @PostMapping("signup/verify")
-    public ResponseEntity<APIResponseDTO> verifySignup(@Valid @RequestBody MailVerificationDTO dto) {
+    public ResponseEntity<APIResponseDTO> verifySignup(@Valid @RequestBody MailVerificationDTO dto, HttpServletResponse response) {
 
         ResultDTO resultDTO = accountRegistrationFacade.verifyAndCompleteRegistration(dto);
         VerificationResult result = resultDTO.getVerificationResult();
@@ -76,6 +78,7 @@ public class VerificationController {
 
         // SUCCESS case - code 1
         if (result == VerificationResult.SUCCESS) {
+            attachJwt(resultDTO.getToken(),response);
             return ResponseEntity.ok(
                     new APIResponseDTO("Successfully Registered", resultDTO.getToken())
             );
@@ -126,5 +129,14 @@ public class VerificationController {
     public String logout(HttpServletResponse response){
         accountRegistrationFacade.expireCookie(response);
         return "Success";
+    }
+
+    private void attachJwt(String jwt,HttpServletResponse response){
+        Cookie cookie = new Cookie("access_token",jwt);
+        cookie.setHttpOnly(true);
+        cookie.setSecure(false);//set true in production through https
+        cookie.setPath("/");
+        cookie.setMaxAge(86400);
+        response.addCookie(cookie);
     }
 }

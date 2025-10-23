@@ -102,7 +102,7 @@ public class JwtFilter extends OncePerRequestFilter {
 
             Cookie jwtCookie = new Cookie("access_token", newAccessToken);
             jwtCookie.setHttpOnly(true);
-            jwtCookie.setSecure(true); // Use in production with HTTPS
+            jwtCookie.setSecure(false); // Use in production with HTTPS
             jwtCookie.setPath("/");
             jwtCookie.setMaxAge((int) (jwtUtils.getExpirationTime() / 1000));
             response.addCookie(jwtCookie);

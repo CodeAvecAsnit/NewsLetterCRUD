@@ -2,16 +2,20 @@ package com.news.lettercrud.Services.auth.impl;
 
 import com.news.lettercrud.Data.DTOs.LoginDTO;
 import com.news.lettercrud.Data.DTOs.LoginResponseDT0;
+import com.news.lettercrud.Data.model.BaseAccount;
+import com.news.lettercrud.Data.model.RefreshToken;
+import com.news.lettercrud.Repositories.BaseAccountRepository;
 import com.news.lettercrud.Security.JwtUtils;
+import com.news.lettercrud.Security.RefreshTokenService;
 import com.news.lettercrud.Security.UserDetailsImpl;
 import com.news.lettercrud.Security.UserDetailsImplService;
 import com.news.lettercrud.Services.auth.LoginService;
 import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -24,17 +28,20 @@ public class LoginServiceImpl implements LoginService {
 
     private final Logger logger = LoggerFactory.getLogger(LoginServiceImpl.class);
 
-    private final UserDetailsImplService userDetailsImplService;
+    private final BaseAccountRepository baseAccountRepository;
 
     private final PasswordEncoder passwordEncoder;
 
     private final JwtUtils jwtUtils;
 
+    private final RefreshTokenService refreshTokenService;
+
     @Autowired
-    public LoginServiceImpl(UserDetailsImplService userDetailsImplService, PasswordEncoder passwordEncoder, JwtUtils jwtUtils) {
-        this.userDetailsImplService = userDetailsImplService;
+    public LoginServiceImpl(UserDetailsImplService userDetailsImplService, BaseAccountRepository baseAccountRepository, PasswordEncoder passwordEncoder, JwtUtils jwtUtils, RefreshTokenService refreshTokenService) {
+        this.baseAccountRepository = baseAccountRepository;
         this.passwordEncoder = passwordEncoder;
         this.jwtUtils = jwtUtils;
+        this.refreshTokenService = refreshTokenService;
     }
 
 
@@ -44,9 +51,8 @@ public class LoginServiceImpl implements LoginService {
      * @return true if password matches false if password doesn't match
      */
 
-    private boolean checkPassword(LoginDTO logUser) {
-        UserDetails user = userDetailsImplService.loadUserByUsername(logUser.getEmail());
-        return passwordEncoder.matches(logUser.getPassword(), user.getPassword());
+    private boolean checkPassword(LoginDTO logUser,String password) {
+        return passwordEncoder.matches(logUser.getPassword(), password);
     }
 
 
@@ -59,12 +65,19 @@ public class LoginServiceImpl implements LoginService {
      */
 
     @Override
-    public LoginResponseDT0 login(LoginDTO loginData, HttpServletResponse httpResponse) {
+    public LoginResponseDT0 login(LoginDTO loginData, HttpServletResponse httpResponse, HttpServletRequest request) {
         //TODO : Implement a Password rate limiting
         try {
-            boolean matcher = checkPassword(loginData);
+            BaseAccount baseAccount = baseAccountRepository.findByEmail(loginData.getEmail());
+            if (baseAccount == null) {
+                return new LoginResponseDT0(403, "No token", "Invalid Password or Email");
+            }
+            boolean matcher = checkPassword(loginData,baseAccount.getPassword());
             if (matcher) {
-               String token = jwtUtils.generateJwtTokens((UserDetailsImpl)userDetailsImplService.loadUserByUsername(loginData.getEmail()));
+                UserDetailsImpl user = UserDetailsImpl.build(baseAccount);
+               String token = jwtUtils.generateJwtTokens(user);
+               RefreshToken refreshToken = refreshTokenService.createRefreshToken(baseAccount,getDeviceInfo(request));
+               attachRefreshToken(httpResponse,refreshToken.getToken());
                attachJwt(httpResponse,token);
                 return new LoginResponseDT0(200, token, "Success");
             } else return new LoginResponseDT0(403, "No token", "Invalid Password or Email");
@@ -75,14 +88,28 @@ public class LoginServiceImpl implements LoginService {
     }
 
 
-
     private void attachJwt(HttpServletResponse response,String jwt){
         Cookie cookie = new Cookie("access_token",jwt);
         cookie.setHttpOnly(true);
-        cookie.setSecure(false);
+        cookie.setSecure(false);//set true in production through https
         cookie.setPath("/");
         cookie.setMaxAge(86400);
         response.addCookie(cookie);
+    }
+
+
+    private void attachRefreshToken(HttpServletResponse response,String refreshToken){
+        Cookie cookie = new Cookie("refresh_token",refreshToken);
+        cookie.setHttpOnly(true);
+        cookie.setSecure(false);//set true in production through https
+        cookie.setPath("/");
+        cookie.setMaxAge(86400);
+        response.addCookie(cookie);
+    }
+
+    private String getDeviceInfo(HttpServletRequest request) {
+        String userAgent = request.getHeader("User-Agent");
+        return userAgent != null ? userAgent : "Unknown Device";
     }
 
 }

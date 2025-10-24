@@ -34,7 +34,7 @@ public class UpdateNewsServiceImpl implements UpdateNewsService {
     @Override
     public void updateNews(int newsId,CreateORUpdateNewsDTO newData,long userId){
        NewsLetter oldNews = newsService.findById(newsId);
-       if(oldNews.getAuthor().getUserId()!=userId){
+       if(oldNews.getAuthor().getId()!=userId){
            throw new WrongAuthorException();
        }
        updateNews(oldNews,newData);

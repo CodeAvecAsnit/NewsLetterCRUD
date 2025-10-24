@@ -1,130 +1,114 @@
 package com.news.lettercrud.Controller;
+
 import com.news.lettercrud.Data.DTOs.*;
-import com.news.lettercrud.Data.Enum.VerificationResult;
-import com.news.lettercrud.Services.auth.impl.AccountRegistrationFacade;
-import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import io.swagger.v3.oas.annotations.responses.ApiResponses;
-import io.swagger.v3.oas.annotations.security.SecurityRequirement;
-import io.swagger.v3.oas.annotations.tags.Tag;
-import jakarta.servlet.http.HttpServletResponse;
+import com.news.lettercrud.Data.model.BaseAccount;
+import com.news.lettercrud.Data.model.RefreshToken;
+import com.news.lettercrud.Security.JwtUtils;
+import com.news.lettercrud.Security.RefreshTokenService;
+import com.news.lettercrud.Security.UserDetailsImpl;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
-/**
- * @author : Asnit Bakhati
- */
+import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
-@RequestMapping("/api/v1")
-@Tag(name = "Auth Controller", description = "Handles User and Company registration and verification")
+@RequestMapping("/api/v1/auth")
+@Slf4j
 public class AuthController {
 
-    private final AccountRegistrationFacade accountRegistrationFacade;
+    private final JwtUtils jwtUtils;
+    private final RefreshTokenService refreshTokenService;
+    private final HttpServletRequest request;
 
     @Autowired
-    public AuthController( AccountRegistrationFacade accountRegistrationFacade){
-        this.accountRegistrationFacade = accountRegistrationFacade;
+    public AuthController(JwtUtils jwtUtils, RefreshTokenService refreshTokenService, HttpServletRequest request) {
+        this.jwtUtils = jwtUtils;
+        this.refreshTokenService = refreshTokenService;
+        this.request = request;
     }
 
+    @PostMapping("/refresh-token")
+    public ResponseEntity<?> refreshAccessToken(@Valid @RequestBody RefreshTokenRequest request) {
+        try {
+            RefreshToken refreshToken = refreshTokenService.validateRefreshToken(request.getRefreshToken());
+            BaseAccount user = refreshToken.getUser();
+            UserDetailsImpl userDetails = UserDetailsImpl.build(user);
 
-    @Operation(summary = "Register a new user and send verification email")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Verification email sent successfully"),
-            @ApiResponse(responseCode = "400", description = "Invalid request")
-    })
+            String newAccessToken = jwtUtils.generateJwtTokens(userDetails);
 
-    @PostMapping("signup/user")
-    public ResponseEntity<APIResponseDTO> registerUser(@Valid @RequestBody RegistrationDTO registrationDTO) {
-        accountRegistrationFacade.registerUserAccount(registrationDTO);
-        return ResponseEntity.ok(new APIResponseDTO("Verification email sent", null));
-    }
+            return ResponseEntity.ok(AuthResponse.builder()
+                    .userId(user.getId())
+                    .username(user.getEmail())
+                    .accessToken(newAccessToken)
+                    .refreshToken(request.getRefreshToken())
+                    .tokenType("Bearer")
+                    .expiresIn(jwtUtils.getExpirationTime() / 1000)
+                    .build());
 
-
-
-    @Operation(summary = "Register a new company and send verification email")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Verification email sent successfully"),
-            @ApiResponse(responseCode = "400", description = "Invalid request")
-    })
-
-    @PostMapping("signup/company")
-    public ResponseEntity<APIResponseDTO> registerCompany(@Valid @RequestBody CompanyRegistrationDTO companyAccount) {
-        accountRegistrationFacade.registerCompanyAccount(companyAccount);
-        return ResponseEntity.ok(new APIResponseDTO("Verification email sent", null));
-    }
-
-
-
-    @Operation(summary = "Verify the signup email and create account")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Successfully registered and signed in"),
-            @ApiResponse(responseCode = "400", description = "Invalid verification code"),
-            @ApiResponse(responseCode = "401", description = "Code expired"),
-            @ApiResponse(responseCode = "404", description = "Account details not found")
-    })
-
-    @PostMapping("signup/verify")
-    public ResponseEntity<APIResponseDTO> verifySignup(@Valid @RequestBody MailVerificationDTO dto) {
-
-        ResultDTO resultDTO = accountRegistrationFacade.verifyAndCompleteRegistration(dto);
-        VerificationResult result = resultDTO.getVerificationResult();
-        //TODO : give jwt as well as the signup response
-
-        // SUCCESS case - code 1
-        if (result == VerificationResult.SUCCESS) {
-            return ResponseEntity.ok(
-                    new APIResponseDTO("Successfully Registered", resultDTO.getToken())
-            );
-        }
-
-        // CODE_EXPIRED case - code 5
-        if (result == VerificationResult.CODE_EXPIRED) {
+        } catch (RuntimeException e) {
+            log.error("Token refresh failed: {}", e.getMessage());
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                    .body(new APIResponseDTO("Code expired", null));
+                    .body(new ErrorResponse("Invalid or expired refresh token", 401));
         }
-
-        // ACCOUNT_NOT_FOUND case - code 6
-        if (result == VerificationResult.ACCOUNT_NOT_FOUND) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body(new APIResponseDTO("Account details not found", null));
-        }
-
-        // CODE_MISMATCH case - code 0/2
-        if (result == VerificationResult.CODE_MISMATCH) {
-            return ResponseEntity.badRequest()
-                    .body(new APIResponseDTO("Invalid verification code", null));
-        }
-
-        // TOO_MANY_ATTEMPTS case - code 3
-        if (result == VerificationResult.TOO_MANY_ATTEMPTS) {
-            return ResponseEntity.badRequest()
-                    .body(new APIResponseDTO("Too many failed attempts", null));
-        }
-
-        // Unexpected error
-        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                .body(new APIResponseDTO("Unexpected error", null));
     }
 
-
-    @Operation(summary = "Check if email is available")
-    @GetMapping("/check-email")
-    public ResponseEntity<?> checkEmail(@RequestParam String email) {
-        boolean available =
-                accountRegistrationFacade.isEmailAvailable(email);
-        return ResponseEntity.ok(available);
+    @PostMapping("/logout")
+    public ResponseEntity<?> logoutUser(@Valid @RequestBody RefreshTokenRequest request) {
+        try {
+            refreshTokenService.revokeToken(request.getRefreshToken());
+            return ResponseEntity.ok(new MessageResponse("Logged out successfully"));
+        } catch (Exception e) {
+            log.error("Logout failed: {}", e.getMessage());
+            return ResponseEntity.ok(new MessageResponse("Logout completed"));
+        }
     }
 
+    @PostMapping("/logout-all-devices")
+    @PreAuthorize("isAuthenticated()")
+    public ResponseEntity<?> logoutAllDevices() {
+        Long userId = SecurityContextHolder.getContext()
+                .getAuthentication()
+                .getPrincipal() instanceof BaseAccount user ? user.getId() : null;
 
-    @Operation(summary = "Remove the token from HTTP only cookie",
-    security =  @SecurityRequirement(name="bearerAuth"))
-    @GetMapping("/log-out")
-    public String logout(HttpServletResponse response){
-        accountRegistrationFacade.expireCookie(response);
-        return "Success";
+        if (userId == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body(new ErrorResponse("User not found", 401));
+        }
+
+        refreshTokenService.revokeAllUserTokens(userId);
+        return ResponseEntity.ok(new MessageResponse("Logged out from all devices"));
+    }
+
+    @GetMapping("/active-sessions")
+    @PreAuthorize("isAuthenticated()")
+    public ResponseEntity<?> getActiveSessions() {
+        BaseAccount user = (BaseAccount) SecurityContextHolder.getContext()
+                .getAuthentication()
+                .getPrincipal();
+
+        List<RefreshToken> activeTokens = refreshTokenService.getActiveTokensByUser(user.getId());
+        List<SessionInfo> sessions = activeTokens.stream()
+                .map(token -> new SessionInfo(
+                        token.getId(),
+                        token.getDeviceInfo(),
+                        token.getCreatedAt(),
+                        token.getExpiryDate()
+                ))
+                .collect(Collectors.toList());
+
+        return ResponseEntity.ok(sessions);
+    }
+
+    private String getDeviceInfo() {
+        String userAgent = request.getHeader("User-Agent");
+        return userAgent != null ? userAgent : "Unknown Device";
     }
 }

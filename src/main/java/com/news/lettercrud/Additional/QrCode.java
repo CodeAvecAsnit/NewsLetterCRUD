@@ -1,4 +1,4 @@
-package Additional;
+package com.news.lettercrud.Additional;
 
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.WriterException;

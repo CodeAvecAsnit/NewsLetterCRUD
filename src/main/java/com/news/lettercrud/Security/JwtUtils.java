@@ -122,7 +122,7 @@ public class JwtUtils {
             Claims claims = Jwts.parser()
                     .verifyWith(secretKey)
                     .build()
-                    .parseSignedClaims(token)  // FIXED: was parseEncryptedClaims
+                    .parseSignedClaims(token)
                     .getPayload();
 
             Date expiryDate = claims.getExpiration();

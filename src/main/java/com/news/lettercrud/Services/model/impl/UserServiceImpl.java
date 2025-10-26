@@ -31,5 +31,8 @@ public class UserServiceImpl implements UserService {
         return baseAccountRepository.existsByEmail(email);
     }
 
+    public BaseAccount findByEmail(String email){
+        return baseAccountRepository.findByEmail(email);
+    }
 
 }

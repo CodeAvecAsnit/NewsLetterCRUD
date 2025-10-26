@@ -10,4 +10,5 @@ public class NewsLetterCrudApplication {
         SpringApplication.run(NewsLetterCrudApplication.class, args);
     }
 
+
 }

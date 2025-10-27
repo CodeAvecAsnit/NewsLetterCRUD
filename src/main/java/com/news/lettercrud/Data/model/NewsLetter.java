@@ -1,5 +1,6 @@
 package com.news.lettercrud.Data.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 
 /**
@@ -22,10 +23,12 @@ public class NewsLetter extends AuditTable{
 
     @ManyToOne
     @JoinColumn(name = "category_id")
+    @JsonIgnore
     private NewsCategory newsCategory;
 
     @ManyToOne
     @JoinColumn(name = "user_id")
+    @JsonIgnore
     private BaseAccount author;
 
 

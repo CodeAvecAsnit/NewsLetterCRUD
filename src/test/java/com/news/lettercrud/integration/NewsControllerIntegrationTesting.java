@@ -7,7 +7,6 @@ import com.news.lettercrud.Data.model.BaseAccount;
 import com.news.lettercrud.Data.model.NewsCategory;
 import com.news.lettercrud.Data.model.NewsLetter;
 import com.news.lettercrud.Data.model.UserAccount;
-import com.news.lettercrud.Repositories.BaseAccountRepository;
 import com.news.lettercrud.Repositories.NewsCategoryRepository;
 import com.news.lettercrud.Repositories.NewsRepository;
 import com.news.lettercrud.Repositories.UserAccountRepository;
@@ -23,12 +22,13 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.web.servlet.MockMvc;
-
-// Correct imports
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 
+/**
+ * @author : Asnit Bakhati
+ */
 @SpringBootTest
 @AutoConfigureMockMvc
 @Transactional
@@ -88,8 +88,7 @@ class NewsControllerIntegrationTesting {
                         .content(objectMapper.writeValueAsString(dto)))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.newsHeadLine").value("API Test News"))
-                .andExpect(jsonPath("$.newsBody").value("Testing REST API"))
-                .andExpect(jsonPath("$.newsCategory.categoryName").value("Tech"));
+                .andExpect(jsonPath("$.newsBody").value("Testing REST API"));
     }
 
     @Test
@@ -97,7 +96,6 @@ class NewsControllerIntegrationTesting {
         NewsCategory category = new NewsCategory();
         category.setCategoryName("Sports");
         category = newsCategoryRepository.save(category);
-
 
         NewsLetter news = new NewsLetter();
         news.setNewsHeadLine("Get Test");
@@ -109,45 +107,43 @@ class NewsControllerIntegrationTesting {
 
         mockMvc.perform(get("/api/v1/news/" + news.getNewsId())
                         .header("Authorization", authToken))
-                .andExpect(status().isOk());
+                .andExpect(status().isOk()).
+                andExpect(jsonPath("$.headline").value(news.getNewsHeadLine())).
+                andExpect(jsonPath("$.imageURL").value(news.getImageUrl())).
+                andExpect(jsonPath("$.body").value(news.getNewsBody())).
+                andExpect(jsonPath("$.authorName").value("By Admin"));
     }
 
     @Test
     public void testUpdateNews_Success() throws Exception {
-        // Setup
         NewsCategory category = new NewsCategory();
         category.setCategoryName("Tech");
         category = newsCategoryRepository.save(category);
 
-        BaseAccount author = new BaseAccount();
-        author.setId(1L);
-        author.setEmail("update@test.com");
-        author.setPassword("pass");
-        entityManager.persist(author);
 
         NewsLetter news = new NewsLetter();
         news.setNewsHeadLine("Old Headline");
         news.setNewsBody("Old Body");
-        news.setAuthor(author);
+        news.setAuthor(classAccount);
         news.setNewsCategory(category);
         news = newsRepository.save(news);
         entityManager.flush();
 
-        // Update DTO
         CreateORUpdateNewsDTO updateDto = new CreateORUpdateNewsDTO();
         updateDto.setHeadline("Updated Headline");
         updateDto.setNewsBody("Updated Body");
         updateDto.setImageURL("updated.jpg");
         updateDto.setNewsCategory("Tech");
 
-        // Test PUT request
-        mockMvc.perform(put("/api/news/" + news.getNewsId())
+        mockMvc.perform(put("/api/v1/news/update")
+                        .param("newsId", String.valueOf(news.getNewsId()))
                         .header("Authorization", authToken)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(updateDto)))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.newsHeadLine").value("Updated Headline"));
+                .andExpect(content().string("Success")); // expecting "Success" as returned
     }
+
 
     @Test
     public void testDeleteNews_Unauthorized() throws Exception {
@@ -169,5 +165,4 @@ class NewsControllerIntegrationTesting {
         baseAccount.setUsername("Author");
         return (BaseAccount)userAccountRepository.save(baseAccount);
     }
-
 }

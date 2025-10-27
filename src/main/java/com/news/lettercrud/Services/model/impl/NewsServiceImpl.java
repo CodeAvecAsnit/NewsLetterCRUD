@@ -49,8 +49,8 @@ public class NewsServiceImpl implements NewsService {
 
     @Override
     @Transactional
-    public void postNews(NewsLetter newsLetter){
-        newsRepository.save(newsLetter);
+    public NewsLetter postNews(NewsLetter newsLetter){
+        return newsRepository.save(newsLetter);
     }
 
 }

@@ -32,12 +32,12 @@ public class UpdateNewsServiceImpl implements UpdateNewsService {
      * Allows creator of the NewsLetter to make changes in it.
      */
     @Override
-    public void updateNews(int newsId,CreateORUpdateNewsDTO newData,long userId){
+    public NewsLetter updateNews(int newsId,CreateORUpdateNewsDTO newData,long userId){
        NewsLetter oldNews = newsService.findById(newsId);
        if(oldNews.getAuthor().getId()!=userId){
            throw new WrongAuthorException();
        }
-       updateNews(oldNews,newData);
+       return updateNews(oldNews,newData);
     }
 
     /**
@@ -53,13 +53,13 @@ public class UpdateNewsServiceImpl implements UpdateNewsService {
     /**
      * Private function that handles the updating of NewsLetter
      */
-    private void updateNews(NewsLetter oldNews,CreateORUpdateNewsDTO newData){
+    private NewsLetter updateNews(NewsLetter oldNews,CreateORUpdateNewsDTO newData){
         NewsCategory cat = categoryService.findByCategoryNameOrCreate(newData.getNewsCategory());
         oldNews.setNewsCategory(cat);
         oldNews.setNewsHeadLine(newData.getHeadline());
         oldNews.setImageUrl(newData.getImageURL());
         oldNews.setNewsBody(newData.getNewsBody());
-        newsService.postNews(oldNews);
+        return newsService.postNews(oldNews);
     }
 
 }

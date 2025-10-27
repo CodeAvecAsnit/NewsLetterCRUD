@@ -7,6 +7,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 public interface NewsService {
+
     NewsLetter findById(int id);
 
     List<NewsLetter> getTodayNews(LocalDateTime from, LocalDateTime to);
@@ -18,5 +19,5 @@ public interface NewsService {
     void deletenews(NewsLetter newsLetter);
 
     @Transactional
-    void postNews(NewsLetter newsLetter);
+    NewsLetter postNews(NewsLetter newsLetter);
 }

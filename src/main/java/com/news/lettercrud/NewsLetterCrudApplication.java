@@ -9,6 +9,4 @@ public class NewsLetterCrudApplication {
     public static void main(String[] args) {
         SpringApplication.run(NewsLetterCrudApplication.class, args);
     }
-
-
 }

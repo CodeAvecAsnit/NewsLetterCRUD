@@ -42,7 +42,7 @@ public class NewsServiceImpl implements NewsService {
     }
 
     @Override
-    public void deletenews(NewsLetter newsLetter) {
+    public void deleteNews(NewsLetter newsLetter) {
         newsRepository.delete(newsLetter);
     }
 
@@ -52,5 +52,6 @@ public class NewsServiceImpl implements NewsService {
     public NewsLetter postNews(NewsLetter newsLetter){
         return newsRepository.save(newsLetter);
     }
+
 
 }

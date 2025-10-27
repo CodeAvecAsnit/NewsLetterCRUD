@@ -1,4 +1,4 @@
-package com.news.lettercrud.service;
+package com.news.lettercrud.unit;
 
 import com.news.lettercrud.Data.DTOs.CreateORUpdateNewsDTO;
 import com.news.lettercrud.Data.Enum.Role;
@@ -19,6 +19,7 @@ import org.mockito.MockitoAnnotations;
 
 import java.util.*;
 
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.mockito.Mockito.when;
 
 
@@ -77,10 +78,9 @@ public class AddNewsTest {
 
         NewsLetter news = CreateORUpdateNewsDTO.buildNewsLetter(data,fakeUser,category);
 
-        when(baseAccountRepository.findById(1L)).thenReturn(Optional.of(fakeUser));
-        when(newsCategoryRepository.findByCategoryName(data.getNewsCategory())).thenReturn(Optional.of(category));
-        when(newsRepository.save(news)).thenReturn(news);
-        assert(addNewsService.postNews(data,1L));
-
+        when(userService.findById(1L)).thenReturn(fakeUser);
+        when(categoryService.findByCategoryNameOrCreate(data.getNewsCategory())).thenReturn(category);
+        when(newsService.postNews(news)).thenReturn(news);
+        assertNull(addNewsService.postNews(data,1L));
     }
 }

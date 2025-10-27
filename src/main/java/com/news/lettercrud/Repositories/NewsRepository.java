@@ -1,5 +1,6 @@
 package com.news.lettercrud.Repositories;
 
+import com.news.lettercrud.Data.model.NewsCategory;
 import com.news.lettercrud.Data.model.NewsLetter;
 import org.springframework.data.jpa.repository.JpaRepository;
 
@@ -8,4 +9,5 @@ import java.util.List;
 
 public interface NewsRepository extends JpaRepository<NewsLetter,Integer> {
     List<NewsLetter> getAllByCreatedDateBetween(LocalDateTime from,LocalDateTime to);
+    List<NewsLetter> findByNewsCategory(NewsCategory techCategory);
 }

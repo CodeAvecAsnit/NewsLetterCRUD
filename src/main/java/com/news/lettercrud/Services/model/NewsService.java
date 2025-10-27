@@ -16,7 +16,7 @@ public interface NewsService {
     void deleteNews(int id);
 
     @Transactional
-    void deletenews(NewsLetter newsLetter);
+    void deleteNews(NewsLetter newsLetter);
 
     @Transactional
     NewsLetter postNews(NewsLetter newsLetter);

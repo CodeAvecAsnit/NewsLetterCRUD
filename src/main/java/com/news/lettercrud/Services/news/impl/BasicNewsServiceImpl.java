@@ -53,7 +53,7 @@ public class BasicNewsServiceImpl implements BasicNewsService {
         if(newsLetter.getAuthor().getId()!=userId){
             throw new WrongAuthorException();
         }
-        newsService.deletenews(newsLetter);
+        newsService.deleteNews(newsLetter);
     }
 
     /**

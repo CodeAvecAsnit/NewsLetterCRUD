@@ -1,4 +1,4 @@
-package com.news.lettercrud.service;
+package com.news.lettercrud.unit;
 
 
 import com.news.lettercrud.Data.DTOs.CreateORUpdateNewsDTO;

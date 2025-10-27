@@ -36,11 +36,10 @@ public class AddNewsServiceImpl implements AddNewsService {
      */
     @Override
     @PreAuthorize("hasAnyAuthority('ADMIN','COMPANY','SUPER_ADMIN')")
-    public boolean postNews(CreateORUpdateNewsDTO data, long userId) {
+    public NewsLetter postNews(CreateORUpdateNewsDTO data, long userId) {
         BaseAccount author = userService.findById(userId);
         NewsCategory category = categoryService.findByCategoryNameOrCreate(data.getNewsCategory());
         NewsLetter news = CreateORUpdateNewsDTO.buildNewsLetter(data, author, category);
-        newsService.postNews(news);
-        return true;
+        return newsService.postNews(news);
     }
 }

@@ -4,6 +4,8 @@ import com.news.lettercrud.Data.model.BaseAccount;
 import com.news.lettercrud.Data.model.RefreshToken;
 
 import com.news.lettercrud.Repositories.RefreshTokenRepository;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,6 +15,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Objects;
 import java.util.UUID;
 
 @Service
@@ -47,7 +50,7 @@ public class RefreshTokenService {
         }
     }
 
-    public RefreshToken validateRefreshToken(String token) {
+    public RefreshToken validateRefreshToken(String token,String deviceInfo) {
         RefreshToken refreshToken = refreshTokenRepository.findByToken(token)
                 .orElseThrow(() -> new RuntimeException("Refresh token not found"));
 
@@ -59,8 +62,12 @@ public class RefreshTokenService {
         if (refreshToken.getIsRevoked()) {
             throw new RuntimeException("Refresh token has been revoked");
         }
-
-        return refreshToken;
+        if(!Objects.equals(refreshToken.getDeviceInfo(), deviceInfo)){
+            throw new RuntimeException("Device doesn't match");
+        }
+        refreshToken.setIsRevoked(true);
+        refreshTokenRepository.save(refreshToken);
+        return createRefreshToken(refreshToken.getUser(),deviceInfo);
     }
 
     public void revokeToken(String token) {

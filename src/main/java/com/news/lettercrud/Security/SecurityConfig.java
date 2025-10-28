@@ -49,7 +49,9 @@ public class SecurityConfig {
                                 "/api/v1/check-email",
                                 "/api/v1/signup/*",
                                 "/api/v1/user/posts",
-                                "/api/v1/news/today"
+                                "/api/v1/news/today",
+                                "/api/v1/auth/refresh",
+                                "/api/v1/auth/refresh-token"
                         ).permitAll()
                         .anyRequest().authenticated()
                 ).cors(Customizer.withDefaults())

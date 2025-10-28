@@ -107,6 +107,7 @@ public class LoginServiceImpl implements LoginService {
         response.addCookie(cookie);
     }
 
+
     private String getDeviceInfo(HttpServletRequest request) {
         String userAgent = request.getHeader("User-Agent");
         return userAgent != null ? userAgent : "Unknown Device";

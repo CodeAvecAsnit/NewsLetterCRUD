@@ -6,12 +6,12 @@ import com.news.lettercrud.Data.model.NewsCategory;
 import com.news.lettercrud.Data.model.NewsLetter;
 import com.news.lettercrud.Data.model.UserAccount;
 import com.news.lettercrud.Repositories.NewsCategoryRepository;
-import com.news.lettercrud.Repositories.NewsRepository;
 import com.news.lettercrud.Repositories.UserAccountRepository;
 import com.news.lettercrud.Services.model.impl.NewsServiceImpl;
 import com.news.lettercrud.Services.news.impl.AddNewsServiceImpl;
 import com.news.lettercrud.Services.news.impl.UpdateNewsServiceImpl;
 import com.news.lettercrud.exceptions.custom.NewsNotFoundException;
+import jakarta.persistence.EntityManager;
 import jakarta.transaction.Transactional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -20,7 +20,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.util.HashSet;
-import java.util.List;
+
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -35,9 +35,6 @@ public class NewsServiceTesting {
     private PasswordEncoder passwordEncoder;
 
     @Autowired
-    private NewsRepository newsRepository;
-
-    @Autowired
     private NewsCategoryRepository newsCategoryRepository;
 
     @Autowired
@@ -45,18 +42,22 @@ public class NewsServiceTesting {
 
     @Autowired
     private UpdateNewsServiceImpl updateNewsServiceImpl;
+
     @Autowired
     private UserAccountRepository userAccountRepository;
 
+    @Autowired
+    private EntityManager entityManager;
+
     @BeforeEach
     public void clean(){
-        newsRepository.deleteAll();
-        newsCategoryRepository.deleteAll();
-        userAccountRepository.deleteAll();
+        entityManager.clear();
+        entityManager.flush();
     }
 
+
     /**
-     * Delete and Update
+     * Create and Update
      */
     @Test
     public void createNews(){
@@ -97,11 +98,9 @@ public class NewsServiceTesting {
     /**
      * Test for Exception
      */
-
     @Test
     public void testException(){
-        assertThrows(NewsNotFoundException.class,()->
-                {
+        assertThrows(NewsNotFoundException.class,()-> {
                     newsService.findById(9999);
                 }
         );

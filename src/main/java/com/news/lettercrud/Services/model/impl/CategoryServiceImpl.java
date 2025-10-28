@@ -40,6 +40,5 @@ public class CategoryServiceImpl implements CategoryService {
                     return newsCategoryRepository.save(cat);
                         }
                         );
-
     }
 }

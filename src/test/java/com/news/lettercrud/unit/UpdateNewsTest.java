@@ -1,15 +1,15 @@
 package com.news.lettercrud.unit;
 
 
-import com.news.lettercrud.Data.DTOs.CreateORUpdateNewsDTO;
-import com.news.lettercrud.Data.model.BaseAccount;
-import com.news.lettercrud.Data.model.NewsCategory;
-import com.news.lettercrud.Data.model.NewsLetter;
-import com.news.lettercrud.Repositories.NewsCategoryRepository;
-import com.news.lettercrud.Repositories.NewsRepository;
-import com.news.lettercrud.Services.model.CategoryService;
-import com.news.lettercrud.Services.model.NewsService;
-import com.news.lettercrud.Services.news.impl.UpdateNewsServiceImpl;
+import com.news.lettercrud.data.DTOs.CreateORUpdateNewsDTO;
+import com.news.lettercrud.data.model.BaseAccount;
+import com.news.lettercrud.data.model.NewsCategory;
+import com.news.lettercrud.data.model.NewsLetter;
+import com.news.lettercrud.repository.NewsCategoryRepository;
+import com.news.lettercrud.repository.NewsRepository;
+import com.news.lettercrud.service.model.CategoryService;
+import com.news.lettercrud.service.model.NewsService;
+import com.news.lettercrud.service.news.impl.UpdateNewsServiceImpl;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;

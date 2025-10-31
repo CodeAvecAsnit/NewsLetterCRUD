@@ -1,0 +1,141 @@
+package com.news.lettercrud.controller;
+import com.news.lettercrud.data.DTOs.*;
+import com.news.lettercrud.data.Enum.VerificationResult;
+import com.news.lettercrud.service.auth.impl.AccountRegistrationFacade;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletResponse;
+import jakarta.validation.Valid;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+/**
+ * @author : Asnit Bakhati
+ */
+
+@RestController
+@RequestMapping("/api/v1")
+@Tag(name = "Auth Controller", description = "Handles User and Company registration and verification")
+public class VerificationController {
+
+    private final AccountRegistrationFacade accountRegistrationFacade;
+
+    @Autowired
+    public VerificationController(AccountRegistrationFacade accountRegistrationFacade){
+        this.accountRegistrationFacade = accountRegistrationFacade;
+    }
+
+
+    @Operation(summary = "Register a new user and send verification email")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Verification email sent successfully"),
+            @ApiResponse(responseCode = "400", description = "Invalid request")
+    })
+
+    @PostMapping("signup/user")
+    public ResponseEntity<APIResponseDTO> registerUser(@Valid @RequestBody RegistrationDTO registrationDTO) {
+        accountRegistrationFacade.registerUserAccount(registrationDTO);
+        return ResponseEntity.ok(new APIResponseDTO("Verification email sent", null));
+    }
+
+
+
+    @Operation(summary = "Register a new company and send verification email")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Verification email sent successfully"),
+            @ApiResponse(responseCode = "400", description = "Invalid request")
+    })
+
+    @PostMapping("signup/company")
+    public ResponseEntity<APIResponseDTO> registerCompany(@Valid @RequestBody CompanyRegistrationDTO companyAccount) {
+        accountRegistrationFacade.registerCompanyAccount(companyAccount);
+        return ResponseEntity.ok(new APIResponseDTO("Verification email sent", null));
+    }
+
+
+
+    @Operation(summary = "Verify the signup email and create account")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Successfully registered and signed in"),
+            @ApiResponse(responseCode = "400", description = "Invalid verification code"),
+            @ApiResponse(responseCode = "401", description = "Code expired"),
+            @ApiResponse(responseCode = "404", description = "Account details not found")
+    })
+
+    @PostMapping("signup/verify")
+    public ResponseEntity<APIResponseDTO> verifySignup(@Valid @RequestBody MailVerificationDTO dto, HttpServletResponse response) {
+
+        ResultDTO resultDTO = accountRegistrationFacade.verifyAndCompleteRegistration(dto);
+        VerificationResult result = resultDTO.getVerificationResult();
+        //TODO : give jwt as well as the signup response
+
+        // SUCCESS case - code 1
+        if (result == VerificationResult.SUCCESS) {
+            attachJwt(resultDTO.getToken(),response);
+            return ResponseEntity.ok(
+                    new APIResponseDTO("Successfully Registered", resultDTO.getToken())
+            );
+        }
+
+        // CODE_EXPIRED case - code 5
+        if (result == VerificationResult.CODE_EXPIRED) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body(new APIResponseDTO("Code expired", null));
+        }
+
+        // ACCOUNT_NOT_FOUND case - code 6
+        if (result == VerificationResult.ACCOUNT_NOT_FOUND) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(new APIResponseDTO("Account details not found", null));
+        }
+
+        // CODE_MISMATCH case - code 0/2
+        if (result == VerificationResult.CODE_MISMATCH) {
+            return ResponseEntity.badRequest()
+                    .body(new APIResponseDTO("Invalid verification code", null));
+        }
+
+        // TOO_MANY_ATTEMPTS case - code 3
+        if (result == VerificationResult.TOO_MANY_ATTEMPTS) {
+            return ResponseEntity.badRequest()
+                    .body(new APIResponseDTO("Too many failed attempts", null));
+        }
+
+        // Unexpected error
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body(new APIResponseDTO("Unexpected error", null));
+    }
+
+
+    @Operation(summary = "Check if email is available")
+    @GetMapping("/check-email")
+    public ResponseEntity<?> checkEmail(@RequestParam String email) {
+        boolean available =
+                accountRegistrationFacade.isEmailAvailable(email);
+        return ResponseEntity.ok(available);
+    }
+
+
+    @Operation(summary = "Remove the token from HTTP only cookie",
+    security =  @SecurityRequirement(name="bearerAuth"))
+    @GetMapping("/log-out")
+    public String logout(HttpServletResponse response){
+        accountRegistrationFacade.expireCookie(response);
+        return "Success";
+    }
+
+    private void attachJwt(String jwt,HttpServletResponse response){
+        Cookie cookie = new Cookie("access_token",jwt);
+        cookie.setHttpOnly(true);
+        cookie.setSecure(false);//set true in production through https
+        cookie.setPath("/");
+        cookie.setMaxAge(86400);
+        response.addCookie(cookie);
+    }
+}

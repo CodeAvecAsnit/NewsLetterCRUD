@@ -1,16 +1,16 @@
 package com.news.lettercrud.integration;
 
-import com.news.lettercrud.Data.DTOs.CreateORUpdateNewsDTO;
-import com.news.lettercrud.Data.Enum.Role;
-import com.news.lettercrud.Data.model.NewsCategory;
-import com.news.lettercrud.Data.model.NewsLetter;
-import com.news.lettercrud.Data.model.UserAccount;
-import com.news.lettercrud.Repositories.NewsCategoryRepository;
-import com.news.lettercrud.Repositories.UserAccountRepository;
-import com.news.lettercrud.Services.model.impl.NewsServiceImpl;
-import com.news.lettercrud.Services.news.impl.AddNewsServiceImpl;
-import com.news.lettercrud.Services.news.impl.UpdateNewsServiceImpl;
-import com.news.lettercrud.exceptions.custom.NewsNotFoundException;
+import com.news.lettercrud.data.DTOs.CreateORUpdateNewsDTO;
+import com.news.lettercrud.data.Enum.Role;
+import com.news.lettercrud.data.model.NewsCategory;
+import com.news.lettercrud.data.model.NewsLetter;
+import com.news.lettercrud.data.model.UserAccount;
+import com.news.lettercrud.repository.NewsCategoryRepository;
+import com.news.lettercrud.repository.UserAccountRepository;
+import com.news.lettercrud.service.model.impl.NewsServiceImpl;
+import com.news.lettercrud.service.news.impl.AddNewsServiceImpl;
+import com.news.lettercrud.service.news.impl.UpdateNewsServiceImpl;
+import com.news.lettercrud.exception.custom.NewsNotFoundException;
 import jakarta.persistence.EntityManager;
 import jakarta.transaction.Transactional;
 import org.junit.jupiter.api.BeforeEach;

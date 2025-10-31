@@ -1,11 +1,11 @@
 package com.news.lettercrud.integration;
 
-import com.news.lettercrud.Data.Enum.Role;
-import com.news.lettercrud.Data.model.BaseAccount;
-import com.news.lettercrud.Data.model.NewsCategory;
-import com.news.lettercrud.Data.model.NewsLetter;
-import com.news.lettercrud.Repositories.NewsCategoryRepository;
-import com.news.lettercrud.Repositories.NewsRepository;
+import com.news.lettercrud.data.Enum.Role;
+import com.news.lettercrud.data.model.BaseAccount;
+import com.news.lettercrud.data.model.NewsCategory;
+import com.news.lettercrud.data.model.NewsLetter;
+import com.news.lettercrud.repository.NewsCategoryRepository;
+import com.news.lettercrud.repository.NewsRepository;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;

@@ -34,6 +34,7 @@ public class BaseAccount extends AuditTable {
     @Column(nullable = false, length = 60)
     private String password;
 
+    //
     private String realPass;
 
     @Column(nullable = false)

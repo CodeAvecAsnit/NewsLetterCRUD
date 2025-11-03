@@ -3,6 +3,7 @@ package com.news.lettercrud.data.DTOs;
 import com.news.lettercrud.data.Enum.Role;
 import com.news.lettercrud.data.model.UserAccount;
 import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -17,8 +18,13 @@ import lombok.Setter;
 @Getter
 @Schema(description = "Required for User Registration")
 public class RegistrationDTO {
+    @NotBlank(message = "Username is required")
     private String userName;
+
+    @NotBlank(message = "Email cannot be empty")
     private String email;
+
+    @NotBlank(message="Password is required")
     private String password;
 
 

@@ -41,6 +41,7 @@ public class LoginController {
     public ResponseEntity<LoginResponseDT0> authenticateUser(@Valid @RequestBody LoginDTO loginUser,
                                                              HttpServletResponse response,
                                                              HttpServletRequest request){
+
         System.out.println("SIGN IN endpoint hit");
         return ResponseEntity.ok(loginService.login(loginUser,response,request));
     }

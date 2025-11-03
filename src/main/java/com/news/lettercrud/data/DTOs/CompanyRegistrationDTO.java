@@ -4,13 +4,29 @@ import com.news.lettercrud.data.Enum.CompanyType;
 import com.news.lettercrud.data.Enum.Role;
 import com.news.lettercrud.data.model.CompanyAccount;
 import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
+import lombok.Getter;
+import lombok.Setter;
 
+@Setter
+@Getter
 @Schema(description = "Data required for company Registration")
 public class CompanyRegistrationDTO {
+
+    @Email
+    @NotBlank(message = "email cannot be empty")
     private String email;
+
+    @NotBlank(message = "Password cannot be empty")
     private String password;
+
     private String websiteURL;
+
+    @NotBlank(message = "Company name is required for registration")
+
     private String companyName;
+
     private String address;
     private String companyType;
     private String logoURL;
@@ -32,78 +48,6 @@ public class CompanyRegistrationDTO {
     public CompanyRegistrationDTO() {
     }
 
-    public String getPhoneNo() {
-        return phoneNo;
-    }
-
-    public void setPhoneNo(String phoneNo) {
-        this.phoneNo = phoneNo;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
-    public String getWebsiteURL() {
-        return websiteURL;
-    }
-
-    public void setWebsiteURL(String websiteURL) {
-        this.websiteURL = websiteURL;
-    }
-
-    public String getCompanyName() {
-        return companyName;
-    }
-
-    public void setCompanyName(String companyName) {
-        this.companyName = companyName;
-    }
-
-
-    public String getAddress() {
-        return address;
-    }
-
-    public void setAddress(String address) {
-        this.address = address;
-    }
-
-    public String getCompanyType() {
-        return companyType;
-    }
-
-    public void setCompanyType(String companyType) {
-        this.companyType = companyType;
-    }
-
-    public String getLogoURL() {
-        return logoURL;
-    }
-
-    public void setLogoURL(String logoURL) {
-        this.logoURL = logoURL;
-    }
-
-    public String getCompanySize() {
-        return companySize;
-    }
-
-    public void setCompanySize(String companySize) {
-        this.companySize = companySize;
-    }
 
     public static CompanyAccount buildCompany(CompanyRegistrationDTO data){
         CompanyAccount account = new CompanyAccount();

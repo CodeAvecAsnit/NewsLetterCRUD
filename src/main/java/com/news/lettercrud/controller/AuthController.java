@@ -107,7 +107,7 @@ public class AuthController {
 
     @GetMapping("/active-sessions")
     @PreAuthorize("isAuthenticated()")
-    public ResponseEntity<?> getActiveSessions(@AuthenticationPrincipal UserDetailsImpl userDetails) {
+    public ResponseEntity<?> getActiveSessions(@AuthenticationPrincipal  UserDetailsImpl userDetails) {
         BaseAccount user = (BaseAccount) SecurityContextHolder.getContext()
                 .getAuthentication()
                 .getPrincipal();

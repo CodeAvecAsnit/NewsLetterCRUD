@@ -2,10 +2,15 @@ package com.news.lettercrud.data.DTOs;
 
 
 import io.swagger.v3.oas.annotations.media.Schema;
+import lombok.Getter;
+import lombok.Setter;
 
+@Setter
+@Getter
 @Schema(description = "API Response")
 public class APIResponseDTO {
 
+    // getters and setters
     @Schema(description = "Status message", example = "Successfully Registered")
     private String message;
 
@@ -19,10 +24,4 @@ public class APIResponseDTO {
         this.token = token;
     }
 
-    // getters and setters
-    public String getMessage() { return message; }
-    public void setMessage(String message) { this.message = message; }
-
-    public String getToken() { return token; }
-    public void setToken(String token) { this.token = token; }
 }

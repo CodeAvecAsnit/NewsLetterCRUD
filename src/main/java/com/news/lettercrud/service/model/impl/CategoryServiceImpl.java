@@ -23,7 +23,7 @@ public class CategoryServiceImpl implements CategoryService {
     @Override
     public NewsCategory findByCategoryName(String category){
         return newsCategoryRepository.findByCategoryName(category).
-                orElseThrow(()->new ResourceDoesNotExistException("There is no category"));
+                orElseThrow(()->new ResourceDoesNotExistException("There is no such category"));
     }
 
     @Override

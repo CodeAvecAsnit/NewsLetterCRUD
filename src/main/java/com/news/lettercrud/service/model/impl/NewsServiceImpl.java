@@ -1,5 +1,6 @@
 package com.news.lettercrud.service.model.impl;
 
+import com.news.lettercrud.data.model.NewsCategory;
 import com.news.lettercrud.data.model.NewsLetter;
 import com.news.lettercrud.repository.NewsRepository;
 import com.news.lettercrud.service.model.NewsService;
@@ -53,5 +54,9 @@ public class NewsServiceImpl implements NewsService {
         return newsRepository.save(newsLetter);
     }
 
-
+    @Override
+    @Transactional
+    public List<NewsLetter> findByNewsCategory(NewsCategory newsCategory){
+        return newsRepository.findByNewsCategory(newsCategory);
+    }
 }

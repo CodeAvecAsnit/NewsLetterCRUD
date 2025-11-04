@@ -17,6 +17,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -39,10 +40,15 @@ public class LoginServiceImpl implements LoginService {
 
     private final RefreshTokenService refreshTokenService;
 
+    @Qualifier("redisPasswordLimiter")
     private final PasswordLimiter passwordLimiter;
 
     @Autowired
-    public LoginServiceImpl(BaseAccountRepository baseAccountRepository, PasswordEncoder passwordEncoder, JwtUtils jwtUtils, RefreshTokenService refreshTokenService, PasswordLimiter passwordLimiter) {
+    public LoginServiceImpl(BaseAccountRepository baseAccountRepository,
+                            PasswordEncoder passwordEncoder,
+                            JwtUtils jwtUtils,
+                            RefreshTokenService refreshTokenService,
+                            @Qualifier("redisPasswordLimiter") PasswordLimiter passwordLimiter) {
         this.baseAccountRepository = baseAccountRepository;
         this.passwordEncoder = passwordEncoder;
         this.jwtUtils = jwtUtils;
@@ -74,24 +80,26 @@ public class LoginServiceImpl implements LoginService {
     public LoginResponseDT0 login(LoginDTO loginData, HttpServletResponse httpResponse, HttpServletRequest request) {
         Integer noOfTry = checkLimitation(loginData.getEmail());
         try {
-            BaseAccount baseAccount = baseAccountRepository.findByEmail(loginData.getEmail());
-            if (baseAccount == null) {
+            Optional<BaseAccount> optionalAccount = baseAccountRepository.findByEmail(loginData.getEmail());
+            if (optionalAccount.isEmpty()) {
                 return new LoginResponseDT0(403, "No token", "Invalid Password or Email");
             }
+            BaseAccount baseAccount = optionalAccount.get();
             boolean matcher = checkPassword(loginData,baseAccount.getPassword());
             if (matcher) {
                 UserDetailsImpl user = UserDetailsImpl.build(baseAccount);
-               String token = jwtUtils.generateJwtTokens(user);
-               RefreshToken refreshToken = refreshTokenService.createRefreshToken(baseAccount,getDeviceInfo(request));
-               attachRefreshToken(httpResponse,refreshToken.getToken());
-               attachJwt(httpResponse,token);
-               passwordLimiter.onSuccessRemove(loginData.getEmail(),noOfTry);
+                String token = jwtUtils.generateJwtTokens(user);
+                RefreshToken refreshToken = refreshTokenService.createRefreshToken(baseAccount,getDeviceInfo(request));
+                attachRefreshToken(httpResponse,refreshToken.getToken());
+                attachJwt(httpResponse,token);
+                passwordLimiter.onSuccessRemove(loginData.getEmail(),noOfTry);
                return new LoginResponseDT0(200, token, "Success");
             } else{
                 passwordLimiter.setTries(loginData.getEmail(),++noOfTry);
                 return new LoginResponseDT0(403, "No token", "Invalid Password or Email");
             }
         } catch (Exception ex) {
+            passwordLimiter.setTries(loginData.getEmail(),++noOfTry);
             logger.error(ex.getMessage());
             return new LoginResponseDT0(403, "No token", "Invalid Password or Email");
         }
@@ -134,4 +142,5 @@ public class LoginServiceImpl implements LoginService {
         }
         return num;
     }
+
 }

@@ -8,6 +8,8 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
+import java.util.Optional;
+
 import static org.hibernate.validator.internal.util.Contracts.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.when;
@@ -50,7 +52,7 @@ public class UserServiceTest {
         fakeUser.setId(1L);
         fakeUser.setEmail(existMail);
 
-        when(baseAccountRepository.findByEmail(existMail)).thenReturn(fakeUser);
+        when(baseAccountRepository.findByEmail(existMail)).thenReturn(Optional.of(fakeUser));
         when(baseAccountRepository.existsByEmail(existMail)).thenReturn(true);
         when(baseAccountRepository.existsByEmail(notExist)).thenReturn(false);
                 BaseAccount baseAccount = userServiceImpl.findByEmail(existMail);

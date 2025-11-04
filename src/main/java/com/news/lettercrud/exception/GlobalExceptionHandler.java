@@ -52,4 +52,9 @@ public class GlobalExceptionHandler {
     public ResponseEntity <Map<String,String>> handleValidationCases(MethodArgumentNotValidException mEx){
         return ResponseEntity.status(400).body(Map.of("Error","Request is invalid"));
     }
+
+    @ExceptionHandler(OutOfTriesException.class)
+    public ResponseEntity<Map<String,String>> handleBruteForce(OutOfTriesException oEx){
+        return ResponseEntity.badRequest().body(Map.of("Error",oEx.getMessage()));
+    }
 }

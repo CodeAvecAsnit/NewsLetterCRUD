@@ -1,5 +1,7 @@
 package com.news.lettercrud.data.DTOs;
 
+import com.news.lettercrud.exception.custom.OutOfTriesException;
+
 //Internal DTO
 public class LoginAttempt {
     private int loginAttempts;
@@ -14,7 +16,7 @@ public class LoginAttempt {
 
     public int equals(Integer emailCode){
         if(loginAttempts<=0){
-            return -1;
+            throw new OutOfTriesException("Max Limit Reached. Try again later");
         }
         --loginAttempts;
         return (code==emailCode)? 1 : 0;

@@ -2,10 +2,7 @@ package com.news.lettercrud.service.components;
 
 import com.github.benmanes.caffeine.cache.Cache;
 import com.github.benmanes.caffeine.cache.Caffeine;
-import com.news.lettercrud.data.DTOs.LoginDTO;
 import jakarta.annotation.PostConstruct;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
 import java.util.Optional;
@@ -17,13 +14,11 @@ import java.util.concurrent.TimeUnit;
 @Component
 public class PasswordLimiter {
 
-    private final PasswordEncoder passwordEncoder;
 
     private Cache<String,Integer> limiter;
 
-    @Autowired
-    public PasswordLimiter(PasswordEncoder passwordEncoder) {
-        this.passwordEncoder = passwordEncoder;
+
+    public PasswordLimiter() {
     }
 
     @PostConstruct
@@ -35,19 +30,19 @@ public class PasswordLimiter {
     }
 
 
-    public static void main(String[] args) {
-        Cache<String,Integer> data = Caffeine.newBuilder()
-                .expireAfterAccess(5, TimeUnit.MINUTES)
-                .maximumSize(1000)
-                .build();
-        String k = "random@gmail.com";
-        Integer m = data.getIfPresent(k);
-        if(m==null){
-            System.out.println(" m is null");
-        }
-
+    public Optional<Integer> getTries(String email){
+        return Optional.ofNullable(limiter.getIfPresent(email));
     }
 
+    public void setTries(String email,int tryNumber){
+        limiter.put(email,tryNumber);
+    }
+
+    public void onSuccessRemove(String email,int tryNumber){
+        if(tryNumber!=1){
+            limiter.invalidate(email);
+        }
+    }
 
 
 }

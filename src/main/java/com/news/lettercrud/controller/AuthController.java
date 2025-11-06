@@ -1,6 +1,6 @@
 package com.news.lettercrud.controller;
 
-import com.news.lettercrud.data.DTOs.*;
+import com.news.lettercrud.data.dto.*;
 import com.news.lettercrud.data.model.BaseAccount;
 import com.news.lettercrud.data.model.RefreshToken;
 import com.news.lettercrud.security.JwtUtils;

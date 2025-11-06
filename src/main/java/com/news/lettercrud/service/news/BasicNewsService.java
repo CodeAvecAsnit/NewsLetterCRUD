@@ -1,6 +1,6 @@
 package com.news.lettercrud.service.news;
 
-import com.news.lettercrud.data.DTOs.NewsDisplayDTO;
+import com.news.lettercrud.data.dto.NewsDisplayDTO;
 
 import java.util.List;
 

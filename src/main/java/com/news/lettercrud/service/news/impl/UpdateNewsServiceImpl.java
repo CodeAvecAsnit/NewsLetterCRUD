@@ -1,6 +1,6 @@
 package com.news.lettercrud.service.news.impl;
 
-import com.news.lettercrud.data.DTOs.CreateORUpdateNewsDTO;
+import com.news.lettercrud.data.dto.CreateORUpdateNewsDTO;
 import com.news.lettercrud.data.model.NewsCategory;
 import com.news.lettercrud.data.model.NewsLetter;
 import com.news.lettercrud.service.model.CategoryService;

@@ -1,7 +1,7 @@
-package com.news.lettercrud.data.DTOs;
+package com.news.lettercrud.data.dto;
 
-import com.news.lettercrud.data.Enum.CompanyType;
-import com.news.lettercrud.data.Enum.Role;
+import com.news.lettercrud.data.enumeration.CompanyType;
+import com.news.lettercrud.data.enumeration.Role;
 import com.news.lettercrud.data.model.CompanyAccount;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.Email;

@@ -1,8 +1,8 @@
 package com.news.lettercrud.service.auth.impl;
 
-import com.news.lettercrud.data.DTOs.LoginAttempt;
-import com.news.lettercrud.data.DTOs.ResultDTO;
-import com.news.lettercrud.data.Enum.VerificationResult;
+import com.news.lettercrud.data.dto.LoginAttempt;
+import com.news.lettercrud.data.dto.ResultDTO;
+import com.news.lettercrud.data.enumeration.VerificationResult;
 import com.news.lettercrud.data.model.BaseAccount;
 import com.news.lettercrud.exception.custom.OutOfTriesException;
 import com.news.lettercrud.exception.custom.ResourceDoesNotExistException;
@@ -19,7 +19,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import java.security.SecureRandom;

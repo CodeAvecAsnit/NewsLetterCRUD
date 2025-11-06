@@ -1,6 +1,6 @@
 package com.news.lettercrud.security;
 
-import com.news.lettercrud.data.DTOs.LoginAttempt;
+import com.news.lettercrud.data.dto.LoginAttempt;
 import com.news.lettercrud.data.model.BaseAccount;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Bean;

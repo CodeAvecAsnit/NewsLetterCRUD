@@ -1,4 +1,4 @@
-package com.news.lettercrud.data.DTOs;
+package com.news.lettercrud.data.dto;
 
 import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;

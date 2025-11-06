@@ -1,10 +1,10 @@
 package com.news.lettercrud.service.auth.impl;
 
-import com.news.lettercrud.data.DTOs.CompanyRegistrationDTO;
-import com.news.lettercrud.data.DTOs.MailVerificationDTO;
-import com.news.lettercrud.data.DTOs.RegistrationDTO;
-import com.news.lettercrud.data.DTOs.ResultDTO;
-import com.news.lettercrud.data.Enum.VerificationResult;
+import com.news.lettercrud.data.dto.CompanyRegistrationDTO;
+import com.news.lettercrud.data.dto.MailVerificationDTO;
+import com.news.lettercrud.data.dto.RegistrationDTO;
+import com.news.lettercrud.data.dto.ResultDTO;
+import com.news.lettercrud.data.enumeration.VerificationResult;
 import com.news.lettercrud.data.model.BaseAccount;
 import com.news.lettercrud.service.auth.RegistrationService;
 import com.news.lettercrud.service.auth.VerificationService;

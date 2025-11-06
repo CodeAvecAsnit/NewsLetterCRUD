@@ -1,7 +1,7 @@
 package com.news.lettercrud.integration;
 
-import com.news.lettercrud.data.DTOs.CreateORUpdateNewsDTO;
-import com.news.lettercrud.data.Enum.Role;
+import com.news.lettercrud.data.dto.CreateORUpdateNewsDTO;
+import com.news.lettercrud.data.enumeration.Role;
 import com.news.lettercrud.data.model.NewsCategory;
 import com.news.lettercrud.data.model.NewsLetter;
 import com.news.lettercrud.data.model.UserAccount;

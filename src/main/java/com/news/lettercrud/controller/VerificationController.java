@@ -1,6 +1,6 @@
 package com.news.lettercrud.controller;
-import com.news.lettercrud.data.DTOs.*;
-import com.news.lettercrud.data.Enum.VerificationResult;
+import com.news.lettercrud.data.dto.*;
+import com.news.lettercrud.data.enumeration.VerificationResult;
 import com.news.lettercrud.service.auth.impl.AccountRegistrationFacade;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;

@@ -1,6 +1,6 @@
 package com.news.lettercrud.data.model;
 
-import com.news.lettercrud.data.Enum.Role;
+import com.news.lettercrud.data.enumeration.Role;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Table;

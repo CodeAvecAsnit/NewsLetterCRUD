@@ -1,7 +1,7 @@
 package com.news.lettercrud.data.model;
 
-import com.news.lettercrud.data.Enum.CompanyType;
-import com.news.lettercrud.data.Enum.Role;
+import com.news.lettercrud.data.enumeration.CompanyType;
+import com.news.lettercrud.data.enumeration.Role;
 import jakarta.persistence.*;
 
 

@@ -1,4 +1,4 @@
-package com.news.lettercrud.data.DTOs;
+package com.news.lettercrud.data.dto;
 
 
 import com.news.lettercrud.data.model.BaseAccount;

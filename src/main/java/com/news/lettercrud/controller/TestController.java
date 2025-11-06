@@ -1,6 +1,6 @@
 package com.news.lettercrud.controller;
 
-import com.news.lettercrud.data.DTOs.APIResponseDTO;
+import com.news.lettercrud.data.dto.APIResponseDTO;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import org.springframework.http.ResponseEntity;

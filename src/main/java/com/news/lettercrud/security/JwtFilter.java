@@ -1,6 +1,6 @@
 package com.news.lettercrud.security;
 
-import com.news.lettercrud.data.Enum.TokenStatus;
+import com.news.lettercrud.data.enumeration.TokenStatus;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.Cookie;

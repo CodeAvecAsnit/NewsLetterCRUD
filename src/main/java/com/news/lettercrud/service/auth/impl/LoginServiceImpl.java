@@ -1,7 +1,7 @@
 package com.news.lettercrud.service.auth.impl;
 
-import com.news.lettercrud.data.DTOs.LoginDTO;
-import com.news.lettercrud.data.DTOs.LoginResponseDT0;
+import com.news.lettercrud.data.dto.LoginDTO;
+import com.news.lettercrud.data.dto.LoginResponseDT0;
 import com.news.lettercrud.data.model.BaseAccount;
 import com.news.lettercrud.data.model.RefreshToken;
 import com.news.lettercrud.exception.custom.OutOfTriesException;

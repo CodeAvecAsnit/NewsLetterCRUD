@@ -1,4 +1,4 @@
-package com.news.lettercrud.data.Enum;
+package com.news.lettercrud.data.enumeration;
 
 
 public enum VerificationResult {

@@ -1,6 +1,6 @@
 package com.news.lettercrud.service.components;
 
-import com.news.lettercrud.data.DTOs.LoginAttempt;
+import com.news.lettercrud.data.dto.LoginAttempt;
 
 import java.util.Optional;
 

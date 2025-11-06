@@ -1,6 +1,6 @@
 package com.news.lettercrud.service.auth.impl;
 
-import com.news.lettercrud.data.Enum.Role;
+import com.news.lettercrud.data.enumeration.Role;
 import com.news.lettercrud.data.model.BaseAccount;
 import com.news.lettercrud.data.model.CompanyAccount;
 import com.news.lettercrud.data.model.UserAccount;

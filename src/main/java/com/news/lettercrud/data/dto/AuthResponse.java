@@ -1,4 +1,4 @@
-package com.news.lettercrud.data.DTOs;
+package com.news.lettercrud.data.dto;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.AllArgsConstructor;

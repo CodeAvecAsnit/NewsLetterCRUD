@@ -1,6 +1,6 @@
-package com.news.lettercrud.data.DTOs;
+package com.news.lettercrud.data.dto;
 
-import com.news.lettercrud.data.Enum.VerificationResult;
+import com.news.lettercrud.data.enumeration.VerificationResult;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

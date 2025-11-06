@@ -1,6 +1,6 @@
 package com.news.lettercrud.service.components.impl;
 
-import com.news.lettercrud.data.DTOs.LoginAttempt;
+import com.news.lettercrud.data.dto.LoginAttempt;
 import com.news.lettercrud.service.components.VerificationCodeRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;

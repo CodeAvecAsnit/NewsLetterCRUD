@@ -85,8 +85,7 @@ public class LoginServiceImpl implements LoginService {
                 return new LoginResponseDT0(403, "No token", "Invalid Password or Email");
             }
             BaseAccount baseAccount = optionalAccount.get();
-            boolean matcher = checkPassword(loginData,baseAccount.getPassword());
-            if (matcher) {
+            if (checkPassword(loginData,baseAccount.getPassword())) {
                 UserDetailsImpl user = UserDetailsImpl.build(baseAccount);
                 String token = jwtUtils.generateJwtTokens(user);
                 RefreshToken refreshToken = refreshTokenService.createRefreshToken(baseAccount,getDeviceInfo(request));

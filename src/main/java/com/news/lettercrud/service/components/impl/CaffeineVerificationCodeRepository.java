@@ -1,9 +1,9 @@
-package com.news.lettercrud.service.components;
+package com.news.lettercrud.service.components.impl;
 
 import com.github.benmanes.caffeine.cache.Cache;
 import com.github.benmanes.caffeine.cache.Caffeine;
 import com.news.lettercrud.data.DTOs.LoginAttempt;
-import com.news.lettercrud.repository.VerificationCodeRepository;
+import com.news.lettercrud.service.components.VerificationCodeRepository;
 import jakarta.annotation.PostConstruct;
 import org.springframework.stereotype.Component;
 

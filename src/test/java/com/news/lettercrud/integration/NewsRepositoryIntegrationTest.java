@@ -22,7 +22,7 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
  */
 @DataJpaTest
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE) // Use actual DB config
-class NewsRepositoryIntegrationTesting {
+class NewsRepositoryIntegrationTest {
 
     @Autowired
     private NewsRepository newsRepository;

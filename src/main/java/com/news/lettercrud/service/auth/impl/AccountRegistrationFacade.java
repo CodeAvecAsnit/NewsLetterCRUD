@@ -77,16 +77,28 @@ public class AccountRegistrationFacade {
         return result;
     }
 
+
+    /**
+     * Resends the verification Code to the email
+     * @param email is the address where email is to be sent
+     */
+    public void resendVerificationCode(String email){
+        verificationService.resendVerificationCode(email);
+
+    }
+
+
+
     /**
      * Checks if email is available for registration
      */
     public boolean isEmailAvailable(String email) {
         return registrationService.isEmailAvailable(email);
     }
+
     /**
      * Delete the JWTe
      */
-
     public void expireCookie(HttpServletResponse response){
         Cookie cookie = new Cookie("access_token", null);
         cookie.setHttpOnly(true);
@@ -95,4 +107,5 @@ public class AccountRegistrationFacade {
         cookie.setMaxAge(0);
         response.addCookie(cookie);
     }
+
 }

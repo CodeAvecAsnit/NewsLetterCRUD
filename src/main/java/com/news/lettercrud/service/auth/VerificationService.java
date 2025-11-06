@@ -10,4 +10,6 @@ public interface VerificationService {
     void sendVerificationCode(BaseAccount account);
 
     ResultDTO verify(String email, int code);
+
+    void resendVerificationCode(String email);
 }

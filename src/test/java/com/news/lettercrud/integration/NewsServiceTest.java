@@ -26,7 +26,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
 @Transactional
-public class NewsServiceTesting {
+public class NewsServiceTest {
 
     @Autowired
     private NewsServiceImpl newsService;

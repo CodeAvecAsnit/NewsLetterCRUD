@@ -1,4 +1,4 @@
-package com.news.lettercrud.repository;
+package com.news.lettercrud.service.components;
 
 import com.news.lettercrud.data.model.BaseAccount;
 

@@ -1,15 +1,19 @@
-package com.news.lettercrud.service.components;
+package com.news.lettercrud.service.components.impl;
 
 
 import com.github.benmanes.caffeine.cache.Cache;
 import com.github.benmanes.caffeine.cache.Caffeine;
 import com.news.lettercrud.data.model.BaseAccount;
-import com.news.lettercrud.repository.PendingAccountRepository;
+import com.news.lettercrud.service.components.PendingAccountRepository;
 import jakarta.annotation.PostConstruct;
 import org.springframework.stereotype.Component;
 
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
+
+/**
+ * @author : Asnit Bakhati
+ */
 
 @Component
     public class CaffeinePendingAccountRepository implements PendingAccountRepository {

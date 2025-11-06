@@ -1,7 +1,10 @@
- package com.news.lettercrud.service.components;
+ package com.news.lettercrud.service.components.impl;
 
+ import com.news.lettercrud.service.components.PasswordLimiter;
  import org.springframework.beans.factory.annotation.Autowired;
  import org.springframework.beans.factory.annotation.Qualifier;
+ import org.springframework.beans.factory.config.ConfigurableBeanFactory;
+ import org.springframework.context.annotation.Scope;
  import org.springframework.data.redis.core.RedisTemplate;
  import org.springframework.stereotype.Component;
 
@@ -12,14 +15,15 @@
   * @author : Asnit Bakhati
   */
  @Component
-public class RedisPasswordLimiter implements PasswordLimiter{
+ @Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
+public class RedisPasswordLimiter implements PasswordLimiter {
 
      private static final int EXPIRY_TIME;
 
      private final RedisTemplate<String,Integer> redisTemplate;
 
      static {
-         EXPIRY_TIME=5;
+         EXPIRY_TIME= 5 ;
      }
 
      @Autowired

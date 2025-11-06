@@ -130,6 +130,13 @@ public class VerificationController {
         return "Success";
     }
 
+    @Operation(summary = "Resend the verification code to the given email")
+    @PostMapping("signup/resend")
+    public ResponseEntity<?> resend(@RequestParam String email){
+        accountRegistrationFacade.resendVerificationCode(email);
+        return ResponseEntity.ok("Success");
+    }
+
     private void attachJwt(String jwt,HttpServletResponse response){
         Cookie cookie = new Cookie("access_token",jwt);
         cookie.setHttpOnly(true);

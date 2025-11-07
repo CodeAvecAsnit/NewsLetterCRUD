@@ -16,8 +16,12 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
+import org.springframework.util.AntPathMatcher;
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Component
 public class JwtFilter extends OncePerRequestFilter {
@@ -41,6 +45,7 @@ public class JwtFilter extends OncePerRequestFilter {
             if (jwt != null) {
                 TokenStatus tokenStatus = jwtUtils.checkTokenStatus(jwt);
                 logger.debug("Token status: {}", tokenStatus);
+                jwtUtils.debugTokenClaims(jwt);
 
                 switch (tokenStatus) {
                     case VALID:
@@ -50,21 +55,16 @@ public class JwtFilter extends OncePerRequestFilter {
 
                     case EXPIRING_SOON:
                         authenticateUser(jwt, request);
-                        response.setHeader("X-Token-Expiring-Soon", "true");
                         logger.info("Token expiring soon for request: {}", request.getRequestURI());
                         break;
 
                     case EXPIRED:
                         logger.warn("Token expired for request: {}", request.getRequestURI());
-                        response.sendError(HttpServletResponse.SC_UNAUTHORIZED,
-                                "Access token expired. Please refresh your token.");
-                        return;
+                         break;
 
                     case INVALID:
                         logger.warn("Invalid JWT token detected for request: {}", request.getRequestURI());
-                        response.sendError(HttpServletResponse.SC_UNAUTHORIZED,
-                                "Invalid token. Please login again.");
-                        return;
+                        break;
                 }
             } else {
                 logger.debug("No JWT token found in request");
@@ -82,20 +82,40 @@ public class JwtFilter extends OncePerRequestFilter {
     private void authenticateUser(String jwt, HttpServletRequest request) {
         try {
             String username = jwtUtils.getUserNameFromToken(jwt);
-            String role = jwtUtils.getUserRoleFromToken(jwt);
+            List<String> roles = jwtUtils.getUserRolesFromToken(jwt);
             long id = jwtUtils.getUserIdFromToken(jwt);
 
-            List<GrantedAuthority> authorities = List.of(new SimpleGrantedAuthority(role));
-            UserDetailsImpl userDetails = new UserDetailsImpl(id, username, "", authorities);
+            if (username == null || username.isBlank()) {
+                logger.warn("JWT token contains invalid username");
+                return;
+            }
+
+            if (roles == null || roles.isEmpty()) {
+                logger.warn("JWT token contains no roles for user: {}", username);
+                roles = Collections.emptyList();
+            }
+
+            List<GrantedAuthority> authorities = roles.stream()
+                    .map(SimpleGrantedAuthority::new)
+                    .collect(Collectors.toList());
+
+            UserDetailsImpl userDetails = new UserDetailsImpl(id, username, "", roles);
 
             UsernamePasswordAuthenticationToken authentication =
-                    new UsernamePasswordAuthenticationToken(userDetails, null, authorities);
+                    new UsernamePasswordAuthenticationToken(
+                            userDetails,
+                            null,
+                            authorities
+                    );
+
             authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
 
             SecurityContextHolder.getContext().setAuthentication(authentication);
-            logger.debug("Security context set for user: {} with role: {}", username, role);
-        } catch (Exception e) {
-            logger.error("Failed to authenticate user from JWT: {}", e.getMessage());
+
+            logger.debug("Successfully authenticated user: {} with roles: {}", username, roles);
+
+        }  catch (Exception e) {
+            logger.error("Failed to authenticate user from JWT: {}", e.getMessage(), e);
         }
     }
 
@@ -125,15 +145,13 @@ public class JwtFilter extends OncePerRequestFilter {
     }
 
     /**
-     *  Override this to exclude certain paths from JWT filtering
+     *  Override this to the paths from JWT filtering. Can cause a lot of problems
      */
     @Override
     protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
         String path = request.getRequestURI();
-        return path.startsWith("/api/auth/") ||
-                path.startsWith("/public/") ||
-                path.equals("/health") ||
-                path.equals("/error")||
-                path.equals(("/api/v1/sign-in"));
+        AntPathMatcher pathMatcher = new AntPathMatcher();
+        return Arrays.stream(SecurityConstants.PUBLIC_URLS)
+                .anyMatch(pattern -> pathMatcher.match(pattern, path));
     }
 }

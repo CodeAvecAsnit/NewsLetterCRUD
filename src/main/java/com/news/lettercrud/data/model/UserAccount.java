@@ -1,6 +1,5 @@
 package com.news.lettercrud.data.model;
 
-import com.news.lettercrud.data.enumeration.Role;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Table;
@@ -17,7 +16,6 @@ public class UserAccount extends BaseAccount {
     private String username;
 
     public UserAccount(){
-        this.setRole(Role.USER);
     }
 
     public String getUsername() {

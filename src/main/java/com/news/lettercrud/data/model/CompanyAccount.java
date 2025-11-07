@@ -1,7 +1,6 @@
 package com.news.lettercrud.data.model;
 
 import com.news.lettercrud.data.enumeration.CompanyType;
-import com.news.lettercrud.data.enumeration.Role;
 import jakarta.persistence.*;
 
 
@@ -31,7 +30,6 @@ public class CompanyAccount extends BaseAccount{
     private String companySize;
 
     public CompanyAccount(){
-        this.setRole(Role.COMPANY);
     }
 
     public String getCompanyName() {

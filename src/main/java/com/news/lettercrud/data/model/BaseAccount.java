@@ -39,10 +39,6 @@ public class BaseAccount extends AuditTable {
 
     private String realPass;
 
-    @Column(nullable = false)
-    @Enumerated(EnumType.STRING)
-    private Role role;
-
     @OneToMany(mappedBy = "author")
     private Set<NewsLetter> writings;
 
@@ -66,7 +62,6 @@ public class BaseAccount extends AuditTable {
                 "id=" + id +
                 ", email='" + email + '\'' +
                 ", password='" + password + '\'' +
-                ", role=" + role +
                 '}';
     }
 }

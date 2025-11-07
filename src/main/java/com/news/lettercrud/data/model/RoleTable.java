@@ -14,6 +14,8 @@ public class RoleTable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int roleId;
 
+    @Column(nullable = false)
+    @Enumerated(EnumType.STRING)
     private Role role;
 
     @ManyToMany(mappedBy = "userRoles")

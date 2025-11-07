@@ -7,6 +7,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
@@ -23,6 +24,7 @@ import java.security.SecureRandom;
 
 @Configuration
 @EnableWebSecurity
+@EnableMethodSecurity(prePostEnabled = true)
 public class SecurityConfig {
 
     private final JwtFilter jwtFilter;
@@ -39,20 +41,7 @@ public class SecurityConfig {
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(
-                                "/login/oauth2/code/github",
-                                "/login/oauth2/code/google",
-                                "/api/v1/sign_in",
-                                "/api/v1/signup/**",
-                                "/swagger-ui.html",
-                                "/swagger-ui/**",
-                                "/v3/api-docs/**",
-                                "/api/v1/check-email",
-                                "/api/v1/signup/*",
-                                "/api/v1/user/posts",
-                                "/api/v1/news/today",
-                                "/api/v1/add/find",
-                                "/api/v1/auth/refresh",
-                                "/api/v1/auth/refresh-token"
+                                SecurityConstants.PUBLIC_URLS
                         ).permitAll()
                         .anyRequest().authenticated()
                 ).cors(Customizer.withDefaults())

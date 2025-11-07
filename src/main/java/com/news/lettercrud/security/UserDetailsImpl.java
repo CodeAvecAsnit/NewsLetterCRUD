@@ -1,26 +1,32 @@
 package com.news.lettercrud.security;
 
 import com.news.lettercrud.data.model.BaseAccount;
+import lombok.Getter;
+import lombok.Setter;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Collection;
-import java.util.Collections;
+import java.util.List;
+import java.util.stream.Collectors;
 
 
 /**
  * @author : Asnit Bakhati
  */
 
+@Setter
 public class UserDetailsImpl implements UserDetails {
 
+    @Getter
     private Long id ;
+    @Getter
     private String email;
     private String password;
     private Collection<? extends GrantedAuthority> authorities;
 
-    public UserDetailsImpl() {
+    public UserDetailsImpl(long id, String username, String password, List<String> roles) {
     }
 
     public UserDetailsImpl(Long id, String email, String password, Collection<? extends GrantedAuthority> authorities) {
@@ -31,13 +37,15 @@ public class UserDetailsImpl implements UserDetails {
     }
 
     public static UserDetailsImpl build(BaseAccount baseAccount){
-        String roleName = baseAccount.getRole().name();
-        GrantedAuthority authority = new SimpleGrantedAuthority(roleName);
+
+        List<SimpleGrantedAuthority> authorities = baseAccount.getUserRoles().stream().
+                map(roleTable -> new SimpleGrantedAuthority(roleTable.getRole().name())).collect(Collectors.toList());
+
         return new UserDetailsImpl(
                 baseAccount.getId(),
                 baseAccount.getEmail(),
                 baseAccount.getPassword(),
-                Collections.singleton(authority));
+                authorities);
     }
 
 
@@ -76,27 +84,4 @@ public class UserDetailsImpl implements UserDetails {
         return false;
     }
 
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
-    public void setAuthorities(Collection<? extends GrantedAuthority> authorities) {
-        this.authorities = authorities;
-    }
 }

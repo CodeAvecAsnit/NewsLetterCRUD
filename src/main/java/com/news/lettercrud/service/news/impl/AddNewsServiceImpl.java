@@ -1,6 +1,6 @@
 package com.news.lettercrud.service.news.impl;
 
-import com.news.lettercrud.data.DTOs.CreateORUpdateNewsDTO;
+import com.news.lettercrud.data.dto.CreateORUpdateNewsDTO;
 import com.news.lettercrud.data.model.BaseAccount;
 import com.news.lettercrud.data.model.NewsCategory;
 import com.news.lettercrud.data.model.NewsLetter;
@@ -12,6 +12,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 /**
  * @author : Asnit Bakhati
@@ -42,4 +44,12 @@ public class AddNewsServiceImpl implements AddNewsService {
         NewsLetter news = CreateORUpdateNewsDTO.buildNewsLetter(data, author, category);
         return newsService.postNews(news);
     }
+
+
+    @Override
+    public List<NewsLetter> findNewsWithCategory(String categoryName) {
+        NewsCategory newsCategory = categoryService.findByCategoryName(categoryName);
+        return newsService.findByNewsCategory(newsCategory);
+    }
+
 }

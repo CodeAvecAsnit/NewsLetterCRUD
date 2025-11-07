@@ -32,7 +32,7 @@ public class UserServiceImpl implements UserService {
     }
 
     public BaseAccount findByEmail(String email){
-        return baseAccountRepository.findByEmail(email);
+        return baseAccountRepository.findByEmail(email).orElseThrow(UserNotFoundException::new);
     }
 
 }

@@ -1,10 +1,10 @@
 package com.news.lettercrud.service.auth.impl;
 
-import com.news.lettercrud.data.DTOs.CompanyRegistrationDTO;
-import com.news.lettercrud.data.DTOs.MailVerificationDTO;
-import com.news.lettercrud.data.DTOs.RegistrationDTO;
-import com.news.lettercrud.data.DTOs.ResultDTO;
-import com.news.lettercrud.data.Enum.VerificationResult;
+import com.news.lettercrud.data.dto.CompanyRegistrationDTO;
+import com.news.lettercrud.data.dto.MailVerificationDTO;
+import com.news.lettercrud.data.dto.RegistrationDTO;
+import com.news.lettercrud.data.dto.ResultDTO;
+import com.news.lettercrud.data.enumeration.VerificationResult;
 import com.news.lettercrud.data.model.BaseAccount;
 import com.news.lettercrud.service.auth.RegistrationService;
 import com.news.lettercrud.service.auth.VerificationService;
@@ -77,16 +77,28 @@ public class AccountRegistrationFacade {
         return result;
     }
 
+
+    /**
+     * Resends the verification Code to the email
+     * @param email is the address where email is to be sent
+     */
+    public void resendVerificationCode(String email){
+        verificationService.resendVerificationCode(email);
+
+    }
+
+
+
     /**
      * Checks if email is available for registration
      */
     public boolean isEmailAvailable(String email) {
         return registrationService.isEmailAvailable(email);
     }
+
     /**
      * Delete the JWTe
      */
-
     public void expireCookie(HttpServletResponse response){
         Cookie cookie = new Cookie("access_token", null);
         cookie.setHttpOnly(true);
@@ -95,4 +107,5 @@ public class AccountRegistrationFacade {
         cookie.setMaxAge(0);
         response.addCookie(cookie);
     }
+
 }

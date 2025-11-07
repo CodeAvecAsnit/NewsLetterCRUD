@@ -1,26 +1,29 @@
 package com.news.lettercrud.service.auth.impl;
 
-import com.news.lettercrud.data.DTOs.LoginAttempt;
-import com.news.lettercrud.data.DTOs.ResultDTO;
-import com.news.lettercrud.data.DTOs.VerificationCode;
-import com.news.lettercrud.data.Enum.VerificationResult;
+import com.news.lettercrud.data.dto.LoginAttempt;
+import com.news.lettercrud.data.dto.ResultDTO;
+import com.news.lettercrud.data.enumeration.VerificationResult;
 import com.news.lettercrud.data.model.BaseAccount;
-import com.news.lettercrud.repository.PendingAccountRepository;
-import com.news.lettercrud.repository.VerificationCodeRepository;
+import com.news.lettercrud.exception.custom.OutOfTriesException;
+import com.news.lettercrud.exception.custom.ResourceDoesNotExistException;
+import com.news.lettercrud.exception.custom.UnknownException;
+import com.news.lettercrud.exception.custom.UserNotFoundException;
+import com.news.lettercrud.service.components.PendingAccountRepository;
+import com.news.lettercrud.service.components.VerificationCodeRepository;
 import com.news.lettercrud.security.JwtUtils;
 import com.news.lettercrud.security.UserDetailsImpl;
 import com.news.lettercrud.service.auth.AccountPersister;
-import com.news.lettercrud.service.auth.VerificationCodeGenerator;
 import com.news.lettercrud.service.auth.VerificationService;
 import com.news.lettercrud.service.infrastructure.NotificationService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
+import java.security.SecureRandom;
 import java.util.Optional;
+import java.util.concurrent.CompletableFuture;
 
 /**
  * @author : Asnit Bakhati
@@ -33,22 +36,22 @@ public class VerificationServiceImpl implements VerificationService {
 
     private final VerificationCodeRepository codeRepository;
     private final PendingAccountRepository accountRepository;
-    private final VerificationCodeGenerator codeGenerator;
+    private final SecureRandom secureRandom;
     private final NotificationService notificationService;
     private final AccountPersister accountPersister;
     private final JwtUtils jwtUtils;
 
     @Autowired
     public VerificationServiceImpl(
-            VerificationCodeRepository codeRepository,
-            PendingAccountRepository accountRepository,
-            VerificationCodeGenerator codeGenerator,
+            @Qualifier("redisCodeRepository") VerificationCodeRepository codeRepository,
+            @Qualifier("redisPendingAccountRepository") PendingAccountRepository accountRepository,
+            SecureRandom secureRandom,
             @Qualifier("mailServiceImpl") NotificationService notificationService,
             AccountPersister accountPersister, JwtUtils jwtUtils
     ) {
         this.codeRepository = codeRepository;
         this.accountRepository = accountRepository;
-        this.codeGenerator = codeGenerator;
+        this.secureRandom = secureRandom;
         this.notificationService = notificationService;
         this.accountPersister = accountPersister;
         this.jwtUtils = jwtUtils;
@@ -58,7 +61,6 @@ public class VerificationServiceImpl implements VerificationService {
      * Stores account info in cache and also sends the verification mail
      */
     @Override
-    @Async
     public void sendVerificationCode(BaseAccount account) {
         String email = account.getEmail();
 
@@ -66,15 +68,15 @@ public class VerificationServiceImpl implements VerificationService {
             logger.info("Verification code already sent for email: {}", email);
             return;
         }
-
-        VerificationCode code = codeGenerator.generate();
+        int code = secureRandom.nextInt(100000, 1000000);
 
         try {
-            notificationService.sendMail(email, code.getValue());
 
-            LoginAttempt attempt = new LoginAttempt(code.getValue());
+            LoginAttempt attempt = new LoginAttempt(code);
             codeRepository.store(email, attempt);
             accountRepository.store(email, account);
+
+            CompletableFuture.runAsync(()->notificationService.sendMail(email,code));
 
             logger.info("Verification code sent successfully to: {}", email);
         } catch (Exception e) {
@@ -99,6 +101,34 @@ public class VerificationServiceImpl implements VerificationService {
             return handleSuccessfulVerification(email);
         } else {
             return mapAttemptResultToVerificationResult(validationResult);
+        }
+    }
+
+
+    @Override
+    public void resendVerificationCode(String email) {
+        Optional<LoginAttempt> attempt = codeRepository.find(email);
+        if(attempt.isEmpty()){
+            throw new ResourceDoesNotExistException("Details not found.Please sign up again");
+        }
+        LoginAttempt att = attempt.get();
+        if(!att.canSendMail()){
+            throw new OutOfTriesException("Cannot send code. Try again later.");
+        }
+        Optional<BaseAccount> account = accountRepository.find(email);
+        if(account.isEmpty()){
+            throw new UserNotFoundException();
+        }
+        int newCode = secureRandom.nextInt(100000, 1000000);
+        try {
+            att.setNewCode(newCode);
+            codeRepository.remove(email);
+            codeRepository.store(email, att);
+            accountRepository.remove(email);
+            accountRepository.store(email, account.get());
+            CompletableFuture.runAsync(() -> notificationService.sendMail(email, newCode));
+        }catch (Exception ex){
+            throw new UnknownException();
         }
     }
 

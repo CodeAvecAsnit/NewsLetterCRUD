@@ -1,11 +1,13 @@
 package com.news.lettercrud.data.model;
 
-import com.news.lettercrud.data.Enum.Role;
+import com.news.lettercrud.data.enumeration.Role;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Set;
@@ -16,6 +18,7 @@ import java.util.Set;
 @Setter
 @Getter
 @Entity
+@AllArgsConstructor
 @Inheritance(strategy = InheritanceType.JOINED)
 @Table(name = "base_accounts")
 public class BaseAccount extends AuditTable {
@@ -36,29 +39,22 @@ public class BaseAccount extends AuditTable {
 
     private String realPass;
 
-    @Column(nullable = false)
-    @Enumerated(EnumType.STRING)
-    private Role role;
-
     @OneToMany(mappedBy = "author")
     private Set<NewsLetter> writings;
 
     @OneToMany(mappedBy = "user")
     private List<RefreshToken> refreshToken;
 
+    @Setter
+    @Getter
+    @ManyToMany(fetch = FetchType.EAGER)
+    @JoinTable(name = "user_roles",
+    joinColumns = @JoinColumn(name = "user_id"),
+    inverseJoinColumns = @JoinColumn(referencedColumnName = "role_id"))
+    private List<RoleTable> userRoles;
+
     public BaseAccount() {
     }
-
-    public BaseAccount(Long id, String email, String password, String realPass, Role role, Set<NewsLetter> writings, List<RefreshToken> refreshToken) {
-        this.id = id;
-        this.email = email;
-        this.password = password;
-        this.realPass = realPass;
-        this.role = role;
-        this.writings = writings;
-        this.refreshToken = refreshToken;
-    }
-
 
     @Override
     public String toString() {
@@ -66,7 +62,6 @@ public class BaseAccount extends AuditTable {
                 "id=" + id +
                 ", email='" + email + '\'' +
                 ", password='" + password + '\'' +
-                ", role=" + role +
                 '}';
     }
 }

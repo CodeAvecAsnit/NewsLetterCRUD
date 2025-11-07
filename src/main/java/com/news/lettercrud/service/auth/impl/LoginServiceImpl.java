@@ -1,23 +1,27 @@
 package com.news.lettercrud.service.auth.impl;
 
-import com.news.lettercrud.data.DTOs.LoginDTO;
-import com.news.lettercrud.data.DTOs.LoginResponseDT0;
+import com.news.lettercrud.data.dto.LoginDTO;
+import com.news.lettercrud.data.dto.LoginResponseDT0;
 import com.news.lettercrud.data.model.BaseAccount;
 import com.news.lettercrud.data.model.RefreshToken;
+import com.news.lettercrud.exception.custom.OutOfTriesException;
 import com.news.lettercrud.repository.BaseAccountRepository;
 import com.news.lettercrud.security.JwtUtils;
 import com.news.lettercrud.security.RefreshTokenService;
 import com.news.lettercrud.security.UserDetailsImpl;
-import com.news.lettercrud.security.UserDetailsImplService;
 import com.news.lettercrud.service.auth.LoginService;
+import com.news.lettercrud.service.components.PasswordLimiter;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+
+import java.util.Optional;
 
 /**
  * @author : Asnit Bakhati
@@ -36,12 +40,20 @@ public class LoginServiceImpl implements LoginService {
 
     private final RefreshTokenService refreshTokenService;
 
+    @Qualifier("redisPasswordLimiter")
+    private final PasswordLimiter passwordLimiter;
+
     @Autowired
-    public LoginServiceImpl(UserDetailsImplService userDetailsImplService, BaseAccountRepository baseAccountRepository, PasswordEncoder passwordEncoder, JwtUtils jwtUtils, RefreshTokenService refreshTokenService) {
+    public LoginServiceImpl(BaseAccountRepository baseAccountRepository,
+                            PasswordEncoder passwordEncoder,
+                            JwtUtils jwtUtils,
+                            RefreshTokenService refreshTokenService,
+                            @Qualifier("redisPasswordLimiter") PasswordLimiter passwordLimiter) {
         this.baseAccountRepository = baseAccountRepository;
         this.passwordEncoder = passwordEncoder;
         this.jwtUtils = jwtUtils;
         this.refreshTokenService = refreshTokenService;
+        this.passwordLimiter = passwordLimiter;
     }
 
 
@@ -66,22 +78,27 @@ public class LoginServiceImpl implements LoginService {
 
     @Override
     public LoginResponseDT0 login(LoginDTO loginData, HttpServletResponse httpResponse, HttpServletRequest request) {
-        //TODO : Implement a Password rate limiting
+        Integer noOfTry = checkLimitation(loginData.getEmail());
         try {
-            BaseAccount baseAccount = baseAccountRepository.findByEmail(loginData.getEmail());
-            if (baseAccount == null) {
+            Optional<BaseAccount> optionalAccount = baseAccountRepository.findByEmail(loginData.getEmail());
+            if (optionalAccount.isEmpty()) {
                 return new LoginResponseDT0(403, "No token", "Invalid Password or Email");
             }
-            boolean matcher = checkPassword(loginData,baseAccount.getPassword());
-            if (matcher) {
+            BaseAccount baseAccount = optionalAccount.get();
+            if (checkPassword(loginData,baseAccount.getPassword())) {
                 UserDetailsImpl user = UserDetailsImpl.build(baseAccount);
-               String token = jwtUtils.generateJwtTokens(user);
-               RefreshToken refreshToken = refreshTokenService.createRefreshToken(baseAccount,getDeviceInfo(request));
-               attachRefreshToken(httpResponse,refreshToken.getToken());
-               attachJwt(httpResponse,token);
-                return new LoginResponseDT0(200, token, "Success");
-            } else return new LoginResponseDT0(403, "No token", "Invalid Password or Email");
+                String token = jwtUtils.generateJwtTokens(user);
+                RefreshToken refreshToken = refreshTokenService.createRefreshToken(baseAccount,getDeviceInfo(request));
+                attachRefreshToken(httpResponse,refreshToken.getToken());
+                attachJwt(httpResponse,token);
+                passwordLimiter.onSuccessRemove(loginData.getEmail(),noOfTry);
+               return new LoginResponseDT0(200, token, "Success");
+            } else{
+                passwordLimiter.setTries(loginData.getEmail(),++noOfTry);
+                return new LoginResponseDT0(403, "No token", "Invalid Password or Email");
+            }
         } catch (Exception ex) {
+            passwordLimiter.setTries(loginData.getEmail(),++noOfTry);
             logger.error(ex.getMessage());
             return new LoginResponseDT0(403, "No token", "Invalid Password or Email");
         }
@@ -111,6 +128,18 @@ public class LoginServiceImpl implements LoginService {
     private String getDeviceInfo(HttpServletRequest request) {
         String userAgent = request.getHeader("User-Agent");
         return userAgent != null ? userAgent : "Unknown Device";
+    }
+
+    private Integer checkLimitation(String email){
+        int num = 1;
+        Optional<Integer> opt = passwordLimiter.getTries(email);
+        if(opt.isPresent()){
+            num = opt.get();
+            if(num>5){
+                throw new OutOfTriesException("Max Limit reached.Try again later");
+            }
+        }
+        return num;
     }
 
 }

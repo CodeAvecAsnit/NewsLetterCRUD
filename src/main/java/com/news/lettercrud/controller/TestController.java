@@ -1,6 +1,6 @@
 package com.news.lettercrud.controller;
 
-import com.news.lettercrud.data.DTOs.APIResponseDTO;
+import com.news.lettercrud.data.dto.APIResponseDTO;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import org.springframework.http.ResponseEntity;
@@ -16,16 +16,15 @@ public class TestController {
     @Operation(summary = "Check if user has USER_ROLE",
     security =  @SecurityRequirement(name="bearerAuth"))
     @GetMapping("/user-only")
-    @PreAuthorize("hasAuthority('USER_ROLE')")
+    @PreAuthorize("hasAuthority('USER')")
     public String onlyUsers(){
         return "this is only for users";
     }
 
-
     @Operation(summary = "Check if user has ADMIN_ROLE",
     security =  @SecurityRequirement(name="bearerAuth"))
     @GetMapping("/admin")
-    @PreAuthorize("hasAuthority('ADMIN_ROLE')")
+    @PreAuthorize("hasAuthority('ADMIN')")
     public String adminStuff() {
         return "Only for admins!";
     }

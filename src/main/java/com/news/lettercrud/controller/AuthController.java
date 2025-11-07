@@ -1,6 +1,6 @@
 package com.news.lettercrud.controller;
 
-import com.news.lettercrud.data.DTOs.*;
+import com.news.lettercrud.data.dto.*;
 import com.news.lettercrud.data.model.BaseAccount;
 import com.news.lettercrud.data.model.RefreshToken;
 import com.news.lettercrud.security.JwtUtils;
@@ -91,28 +91,21 @@ public class AuthController {
 
     @PostMapping("/logout-all-devices")
     @PreAuthorize("isAuthenticated()")
-    public ResponseEntity<?> logoutAllDevices(@AuthenticationPrincipal BaseAccount baseAccount) {
-        Long userId = SecurityContextHolder.getContext()
-                .getAuthentication()
-                .getPrincipal() instanceof BaseAccount user ? user.getId() : null;
-
+    public ResponseEntity<?> logoutAllDevices(@AuthenticationPrincipal UserDetailsImpl userDetails) {
+        Long userId = userDetails.getId();
         if (userId == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
                     .body(new ErrorResponse("User not found", 401));
         }
-
         refreshTokenService.revokeAllUserTokens(userId);
         return ResponseEntity.ok(new MessageResponse("Logged out from all devices"));
     }
 
     @GetMapping("/active-sessions")
     @PreAuthorize("isAuthenticated()")
-    public ResponseEntity<?> getActiveSessions(@AuthenticationPrincipal UserDetailsImpl userDetails) {
-        BaseAccount user = (BaseAccount) SecurityContextHolder.getContext()
-                .getAuthentication()
-                .getPrincipal();
+    public ResponseEntity<?> getActiveSessions(@AuthenticationPrincipal  UserDetailsImpl userDetails) {
 
-        List<RefreshToken> activeTokens = refreshTokenService.getActiveTokensByUser(user.getId());
+        List<RefreshToken> activeTokens = refreshTokenService.getActiveTokensByUser(userDetails.getId());
         List<SessionInfo> sessions = activeTokens.stream()
                 .map(token -> new SessionInfo(
                         token.getId(),
@@ -124,6 +117,7 @@ public class AuthController {
 
         return ResponseEntity.ok(sessions);
     }
+
 
     private String getDeviceInfo(HttpServletRequest request) {
         String userAgent = request.getHeader("User-Agent");

@@ -60,9 +60,9 @@ public class RefreshTokenService {
         if (refreshToken.getIsRevoked()) {
             throw new RuntimeException("Refresh token has been revoked");
         }
-        if(!Objects.equals(refreshToken.getDeviceInfo(), deviceInfo)){
-            throw new RuntimeException("Device doesn't match");
-        }
+//        if(!Objects.equals(refreshToken.getDeviceInfo(), deviceInfo)){
+//            throw new RuntimeException("Device doesn't match");
+//        }
         refreshToken.setIsRevoked(true);
         refreshTokenRepository.save(refreshToken);
         return createRefreshToken(refreshToken.getUser(),deviceInfo);

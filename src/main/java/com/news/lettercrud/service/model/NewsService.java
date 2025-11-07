@@ -1,5 +1,6 @@
 package com.news.lettercrud.service.model;
 
+import com.news.lettercrud.data.model.NewsCategory;
 import com.news.lettercrud.data.model.NewsLetter;
 import jakarta.transaction.Transactional;
 
@@ -20,4 +21,7 @@ public interface NewsService {
 
     @Transactional
     NewsLetter postNews(NewsLetter newsLetter);
+
+    @Transactional
+    List<NewsLetter> findByNewsCategory(NewsCategory newsCategory);
 }

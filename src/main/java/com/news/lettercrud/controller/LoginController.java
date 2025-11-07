@@ -1,7 +1,7 @@
 package com.news.lettercrud.controller;
 
-import com.news.lettercrud.data.DTOs.LoginDTO;
-import com.news.lettercrud.data.DTOs.LoginResponseDT0;
+import com.news.lettercrud.data.dto.LoginDTO;
+import com.news.lettercrud.data.dto.LoginResponseDT0;
 import com.news.lettercrud.service.auth.LoginService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -41,6 +41,7 @@ public class LoginController {
     public ResponseEntity<LoginResponseDT0> authenticateUser(@Valid @RequestBody LoginDTO loginUser,
                                                              HttpServletResponse response,
                                                              HttpServletRequest request){
+
         System.out.println("SIGN IN endpoint hit");
         return ResponseEntity.ok(loginService.login(loginUser,response,request));
     }

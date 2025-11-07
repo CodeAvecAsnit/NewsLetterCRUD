@@ -1,6 +1,6 @@
 package com.news.lettercrud.controller;
 
-import com.news.lettercrud.data.DTOs.CreateORUpdateNewsDTO;
+import com.news.lettercrud.data.dto.CreateORUpdateNewsDTO;
 import com.news.lettercrud.security.UserDetailsImpl;
 import com.news.lettercrud.service.news.UpdateNewsService;
 import io.swagger.v3.oas.annotations.Operation;

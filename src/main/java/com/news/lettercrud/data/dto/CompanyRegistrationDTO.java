@@ -3,11 +3,14 @@ package com.news.lettercrud.data.dto;
 import com.news.lettercrud.data.enumeration.CompanyType;
 import com.news.lettercrud.data.enumeration.Role;
 import com.news.lettercrud.data.model.CompanyAccount;
+import com.news.lettercrud.data.model.RoleTable;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Getter;
 import lombok.Setter;
+
+import java.util.List;
 
 @Setter
 @Getter
@@ -49,12 +52,12 @@ public class CompanyRegistrationDTO {
     }
 
 
-    public static CompanyAccount buildCompany(CompanyRegistrationDTO data){
+    public static CompanyAccount buildCompany(CompanyRegistrationDTO data, List<RoleTable> roleTables){
         CompanyAccount account = new CompanyAccount();
         account.setEmail(data.getEmail());
         account.setPassword(data.getPassword());
         account.setRealPass(data.getPassword());
-        account.setRole(Role.COMPANY);
+        account.setUserRoles(roleTables);
         account.setCompanyName(data.getCompanyName());
         account.setPhoneNumber(data.getPhoneNo());
         account.setAddress(data.getAddress());

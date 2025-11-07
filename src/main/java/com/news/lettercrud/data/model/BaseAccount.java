@@ -7,6 +7,7 @@ import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Set;
@@ -36,7 +37,6 @@ public class BaseAccount extends AuditTable {
     @Column(nullable = false, length = 60)
     private String password;
 
-    //
     private String realPass;
 
     @Column(nullable = false)
@@ -49,6 +49,8 @@ public class BaseAccount extends AuditTable {
     @OneToMany(mappedBy = "user")
     private List<RefreshToken> refreshToken;
 
+    @Setter
+    @Getter
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name = "user_roles",
     joinColumns = @JoinColumn(name = "user_id"),
@@ -57,7 +59,6 @@ public class BaseAccount extends AuditTable {
 
     public BaseAccount() {
     }
-
 
     @Override
     public String toString() {

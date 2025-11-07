@@ -39,7 +39,7 @@ public class AccountPersisterImpl implements AccountPersister {
     @Override
     public BaseAccount persist(BaseAccount account) {
         account.setPassword(passwordEncoder.encode(account.getPassword()));
-        if (account.getRole() == Role.COMPANY) {
+        if (account.getUserRoles().stream().anyMatch(roleTable -> roleTable.getRole().equals(Role.COMPANY))) {
             return (BaseAccount) companyRepository.save((CompanyAccount) account);
         } else {
             return (BaseAccount) userAccountRepository.save((UserAccount) account);

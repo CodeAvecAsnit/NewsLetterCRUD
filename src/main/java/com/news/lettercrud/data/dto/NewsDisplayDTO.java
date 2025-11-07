@@ -11,6 +11,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.Optional;
+
 /**
  * @author : Asnit Bakhati
  */
@@ -31,7 +33,7 @@ public class NewsDisplayDTO {
     public static NewsDisplayDTO build(NewsLetter newsLetter){
         NewsDisplayDTO data = new NewsDisplayDTO();
         BaseAccount account = newsLetter.getAuthor();
-        if(account.getRole()== Role.COMPANY){
+        if(account.getUserRoles().stream().anyMatch(roleTable -> roleTable.getRole().equals(Role.COMPANY))){
             CompanyAccount company = (CompanyAccount) account;
             data.setAuthorName(company.getCompanyName());
         }else {

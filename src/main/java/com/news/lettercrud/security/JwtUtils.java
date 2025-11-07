@@ -14,6 +14,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.stereotype.Component;
 import javax.crypto.SecretKey;
 import java.util.Date;
+import java.util.List;
 
 @Component
 public class JwtUtils {
@@ -61,25 +62,30 @@ public class JwtUtils {
                 .compact();
     }
 
-    public String generateAccessTokenFromUser(BaseAccount user){
+    public String generateAccessTokenFromUser(BaseAccount user) {
+        List<String> roleNames = user.getUserRoles().stream()
+                .map(r -> r.getRole().name())
+                .toList();
+
         return Jwts.builder()
                 .subject(user.getEmail())
-                .claim("role", user.getRole())
+                .claim("roles", roleNames)
                 .claim("id", user.getId())
                 .issuedAt(new Date())
-                .expiration(new Date(new Date().getTime() + jwtExpiration))
+                .expiration(new Date(System.currentTimeMillis() + jwtExpiration))
                 .signWith(secretKey)
                 .compact();
     }
 
-    public String getUserRoleFromToken(String token) {
+    public List getUserRolesFromToken(String token) {
         return Jwts.parser()
                 .verifyWith(secretKey)
                 .build()
                 .parseSignedClaims(token)
                 .getPayload()
-                .get("role", String.class);
+                .get("roles", List.class);
     }
+
 
     public Long getUserIdFromToken(String token){
         return Jwts.parser()

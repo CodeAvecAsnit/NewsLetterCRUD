@@ -10,6 +10,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * @author : Asnit Bakhati
@@ -32,6 +33,15 @@ public class BasicNewsServiceImpl implements BasicNewsService {
         LocalDateTime yesterday = today.minusDays(1);
         return newsService.getTodayNews(yesterday,today).
                 stream().map(NewsDisplayDTO::build).toList();
+    }
+
+    /**
+     * Fetches recently created news
+     */
+    @Override
+    public List<NewsDisplayDTO> getLatest(){
+        return newsService.findLatestNews().stream()
+                .map(NewsDisplayDTO::build).collect(Collectors.toList());
     }
 
     /**

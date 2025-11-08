@@ -13,6 +13,7 @@ public class SecurityConstants {
             "/api/v1/check-email",
             "/api/v1/user/posts",
             "/api/v1/news/today",
+            "/api/v1/news/latest",
             "/api/v1/add/find",
             "/api/v1/auth/refresh",
             "/api/v1/auth/refresh-token"

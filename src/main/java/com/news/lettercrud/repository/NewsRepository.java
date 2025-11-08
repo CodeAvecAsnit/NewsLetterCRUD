@@ -10,4 +10,5 @@ import java.util.List;
 public interface NewsRepository extends JpaRepository<NewsLetter,Integer> {
     List<NewsLetter> getAllByCreatedDateBetween(LocalDateTime from,LocalDateTime to);
     List<NewsLetter> findByNewsCategory(NewsCategory techCategory);
+    List<NewsLetter> findTop10ByOrderByCreatedDateDesc();
 }

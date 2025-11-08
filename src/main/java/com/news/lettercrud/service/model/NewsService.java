@@ -24,4 +24,7 @@ public interface NewsService {
 
     @Transactional
     List<NewsLetter> findByNewsCategory(NewsCategory newsCategory);
+
+    @Transactional
+    List<NewsLetter> findLatestNews();
 }

@@ -22,6 +22,7 @@ import java.util.Optional;
 @AllArgsConstructor
 @Schema(description = "Data fields that can be seen by user")
 public class NewsDisplayDTO {
+    private int newsId;
     private String headline;
     private String newsDate;
     private String imageURL;
@@ -32,6 +33,7 @@ public class NewsDisplayDTO {
 
     public static NewsDisplayDTO build(NewsLetter newsLetter){
         NewsDisplayDTO data = new NewsDisplayDTO();
+        data.setNewsId(newsLetter.getNewsId());
         BaseAccount account = newsLetter.getAuthor();
         if(account.getUserRoles().stream().anyMatch(roleTable -> roleTable.getRole().equals(Role.COMPANY))){
             CompanyAccount company = (CompanyAccount) account;

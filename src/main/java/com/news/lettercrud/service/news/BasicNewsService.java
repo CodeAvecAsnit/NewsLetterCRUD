@@ -8,6 +8,8 @@ public interface BasicNewsService {
 
     List<NewsDisplayDTO> getTodayNews();
 
+    List<NewsDisplayDTO> getLatest();
+
     NewsDisplayDTO getNewsById(int id);
 
     void deleteNewsByUser(long userId, int newsId);

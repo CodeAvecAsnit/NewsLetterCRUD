@@ -59,4 +59,10 @@ public class NewsServiceImpl implements NewsService {
     public List<NewsLetter> findByNewsCategory(NewsCategory newsCategory){
         return newsRepository.findByNewsCategory(newsCategory);
     }
+
+    @Override
+    @Transactional
+    public List<NewsLetter> findLatestNews(){
+        return newsRepository.findTop10ByOrderByCreatedDateDesc();
+    }
 }

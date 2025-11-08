@@ -28,6 +28,11 @@ public class BasicNewsController {
         return ResponseEntity.ok(basicNewsService.getTodayNews());
     }
 
+    @GetMapping("/latest")
+    public ResponseEntity<?> getRecentNews(){
+        return ResponseEntity.ok(basicNewsService.getLatest());
+    }
+
 
     @Operation(security =  @SecurityRequirement(name="bearerAuth"))
     @DeleteMapping("/delete")

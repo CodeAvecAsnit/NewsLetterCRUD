@@ -1,5 +1,6 @@
 package com.news.lettercrud.security;
 
+import com.news.lettercrud.exception.custom.UserNotFoundException;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -28,10 +29,12 @@ import java.security.SecureRandom;
 public class SecurityConfig {
 
     private final JwtFilter jwtFilter;
+    private final APIRateLimitingFilter apiRateLimitingFilter;
 
     @Autowired
-    public SecurityConfig(JwtFilter jwtFilter) {
+    public SecurityConfig(JwtFilter jwtFilter, APIRateLimitingFilter apiRateLimitingFilter) {
         this.jwtFilter = jwtFilter;
+        this.apiRateLimitingFilter = apiRateLimitingFilter;
     }
 
     @Bean
@@ -52,6 +55,7 @@ public class SecurityConfig {
                             response.getWriter().write("{\"error\": \"Unauthorized\"}");
                         })
                 )
+                .addFilterBefore(apiRateLimitingFilter, UsernamePasswordAuthenticationFilter.class)
                 .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();

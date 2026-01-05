@@ -46,6 +46,13 @@ public class RedisConfig {
         return template;
     }
 
+    @Bean(name ="redisTemplateFilter")
+    public RedisTemplate<String,String> redisTemplateFilter(RedisConnectionFactory redisConnectionFactory){
+        RedisTemplate<String,String> redisTemplate = new RedisTemplate<>();
+        redisTemplate.setConnectionFactory(redisConnectionFactory);
+        return redisTemplate;
+    }
+
     @Bean (name="redisClient")
     public RedisClient redisClient(){
         return RedisClient.create("redis://localhost:6379");

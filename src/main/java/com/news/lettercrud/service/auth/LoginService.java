@@ -8,6 +8,5 @@ import jakarta.servlet.http.HttpServletResponse;
 
 
 public interface LoginService {
-
     LoginResponseDT0 login(LoginDTO request, HttpServletResponse response, HttpServletRequest httpRequest);
 }
